@@ -1,30 +1,33 @@
-FROM ruby:3.2.1-alpine
+FROM ruby:3.4.5-alpine
 
-# 安裝系統依賴
+# Install system dependencies
 RUN apk add --no-cache \
     build-base \
     sqlite-dev \
     nodejs \
     yarn \
-    tzdata
+    tzdata \
+    yaml-dev \
+    zlib-dev
 
-# 設置工作目錄
+# Set working directory
 WORKDIR /app
 
-# 複製 Gemfile 並安裝 gems
-COPY Gemfile* ./
+# Copy Gemfile and install gems
+COPY Gemfile ./
+RUN bundle lock --add-platform x86_64-linux-musl
 RUN bundle install
 
-# 複製應用程式碼
+# Copy application code
 COPY . .
 
-# 創建資料庫目錄並設置權限並生成Rails binstubs
+# Create database directory, set permissions and generate Rails binstubs
 RUN mkdir -p /app/db /app/tmp/pids && \
     chmod 755 /app/db && \
     bundle exec rake app:update:bin || true
 
-# 暴露端口
+# Expose port
 EXPOSE 3000
 
-# 啟動命令
+# Start command
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
