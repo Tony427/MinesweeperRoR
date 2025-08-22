@@ -1,33 +1,33 @@
 # Minesweeper Board Generator - Technical Specification
 
-## 1. 專案概述
+## 1. Project Overview
 
-基於 `Requirement.md` 的需求，本專案開發一個 Ruby on Rails 應用程式，用於生成 Minesweeper 板子並提供視覺化展示。
+This Ruby on Rails application generates customizable minesweeper boards with visual display capabilities. Built as a technical challenge demonstration, it showcases professional-grade architecture, performance optimization, and deployment readiness.
 
-### 核心功能需求
-- ✅ 用戶輸入參數生成 Minesweeper 板子
-- ✅ 儲存板子到資料庫（名稱、email、板子資料）
-- ✅ 展示板子視覺化（○ 空格，● 地雷）
-- ✅ 顯示最近 10 個板子列表
-- ✅ 查看所有板子頁面
-- ✅ 自製板子生成演算法（高效能）
-- ✅ Docker Compose 部署
+### Core Functional Requirements
+- ✅ User input-driven board generation with custom parameters
+- ✅ Database persistence (board name, email, board data)
+- ✅ Visual board representation (○ empty cells, ● mines)
+- ✅ Recent boards listing (10 most recent)
+- ✅ Complete board archive with search capabilities
+- ✅ Custom high-performance mine placement algorithm
+- ✅ Docker Compose deployment configuration
 
-## 2. 技術架構
+## 2. Technical Architecture
 
-### 2.1 技術選型
-- **後端框架**：Ruby on Rails 7.x
-- **前端技術**：ERB Templates + Bootstrap 5
-- **資料庫**：SQLite（開發 + 生產環境）
-- **部署方式**：Docker Compose
-- **快取系統**：Redis（選用）
+### 2.1 Technology Stack
+- **Backend Framework**: Ruby on Rails 7.x
+- **Frontend Technology**: ERB Templates + Bootstrap 5
+- **Database**: SQLite (development & production)
+- **Deployment Method**: Docker Compose
+- **Caching System**: Redis (optional)
 
-### 2.2 架構模式
-- **MVC 架構**：標準 Rails MVC 模式
-- **服務層**：MinesweeperGenerator 獨立服務類
-- **資料序列化**：JSON 格式儲存 2D 陣列
+### 2.2 Architectural Patterns
+- **MVC Architecture**: Standard Rails Model-View-Controller pattern
+- **Service Layer**: MinesweeperGenerator isolated service class
+- **Data Serialization**: JSON format for 2D array storage
 
-## 3. 資料庫設計
+## 3. Database Design
 
 ### 3.1 Board Model
 ```ruby
@@ -55,7 +55,7 @@ class Board < ApplicationRecord
 end
 ```
 
-### 3.2 資料庫表結構
+### 3.2 Database Schema
 ```sql
 CREATE TABLE boards (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,7 +64,7 @@ CREATE TABLE boards (
   width INTEGER NOT NULL,
   height INTEGER NOT NULL,
   mines_count INTEGER NOT NULL,
-  board_data TEXT NOT NULL,  -- JSON 格式的 2D 陣列
+  board_data TEXT NOT NULL,  -- JSON format 2D array
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
 );
@@ -73,9 +73,9 @@ CREATE INDEX index_boards_on_created_at ON boards (created_at);
 CREATE INDEX index_boards_on_email ON boards (email);
 ```
 
-## 4. 後端規格
+## 4. Backend Specification
 
-### 4.1 路由設計
+### 4.1 Routing Design
 ```ruby
 # config/routes.rb
 Rails.application.routes.draw do
@@ -109,14 +109,14 @@ class BoardsController < ApplicationController
       @board.board_data = generator.generate.to_json
       
       if @board.save
-        redirect_to @board
+        redirect_to @board, notice: 'Board generated successfully!'
       else
         @recent_boards = Board.latest_ten
-        render :index
+        render :index, status: :unprocessable_entity
       end
     else
       @recent_boards = Board.latest_ten
-      render :index
+      render :index, status: :unprocessable_entity
     end
   end
 
@@ -132,7 +132,7 @@ class BoardsController < ApplicationController
 end
 ```
 
-### 4.3 MinesweeperGenerator 服務
+### 4.3 MinesweeperGenerator Service
 ```ruby
 # app/services/minesweeper_generator.rb
 class MinesweeperGenerator
@@ -143,10 +143,10 @@ class MinesweeperGenerator
   end
 
   def generate
-    # 初始化空板子
+    # Initialize empty board
     board = Array.new(@height) { Array.new(@width) { { mine: false } } }
     
-    # 使用 Array.sample 高效放置地雷 (O(n))
+    # Use Array.sample for efficient mine placement (O(n))
     mine_positions = generate_mine_positions
     mine_positions.each do |row, col|
       board[row][col][:mine] = true
@@ -168,12 +168,12 @@ class MinesweeperGenerator
 end
 ```
 
-## 5. 前端規格
+## 5. Frontend Specification
 
-### 5.1 頁面結構
-1. **首頁** (`boards#index`) - `/`
-2. **板子詳情** (`boards#show`) - `/boards/:id`
-3. **所有板子** (`boards#all`) - `/boards`
+### 5.1 Page Structure
+1. **Home Page** (`boards#index`) - `/`
+2. **Board Details** (`boards#show`) - `/boards/:id`
+3. **All Boards** (`boards#all`) - `/boards`
 
 ### 5.2 Layout Template
 ```erb
@@ -181,28 +181,59 @@ end
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Minesweeper Generator</title>
+    <title>Minesweeper Board Generator</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    
+    <style>
+      .board-grid {
+        font-family: 'Courier New', monospace;
+        line-height: 1;
+      }
+      
+      .cell {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        border: 1px solid #ddd;
+      }
+      
+      .cell.mine {
+        background-color: #dc3545;
+        color: white;
+      }
+      
+      .cell.empty {
+        background-color: #f8f9fa;
+        color: #333;
+      }
+    </style>
   </head>
 
   <body>
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
-        <a class="navbar-brand" href="/">Minesweeper Generator</a>
+        <%= link_to "Minesweeper Generator", root_path, class: "navbar-brand" %>
         
         <div class="navbar-nav">
-          <a class="nav-link" href="/">Home</a>
-          <a class="nav-link" href="/boards">All Boards</a>
+          <%= link_to "Home", root_path, class: "nav-link" %>
+          <%= link_to "All Boards", all_boards_path, class: "nav-link" %>
         </div>
       </div>
     </nav>
     
+    <!-- Main Content -->
     <main class="container mt-4">
+      <!-- Flash Messages -->
       <% flash.each do |type, message| %>
         <div class="alert alert-<%= type == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show">
           <%= message %>
@@ -213,24 +244,26 @@ end
       <%= yield %>
     </main>
     
+    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <%= javascript_importmap_tags %>
   </body>
 </html>
 ```
 
-### 5.3 首頁設計
+### 5.3 Home Page Design
 ```erb
 <!-- app/views/boards/index.html.erb -->
 <div class="row">
   <div class="col-md-8">
     <h1>Minesweeper Board Generator</h1>
+    <p class="text-muted">Generate custom minesweeper boards with your specifications</p>
     
     <%= form_with model: @board, local: true, class: "row g-3" do |form| %>
       <% if @board.errors.any? %>
         <div class="col-12">
           <div class="alert alert-danger">
-            <ul class="mb-0">
+            <strong>Please fix the following errors:</strong>
+            <ul class="mb-0 mt-2">
               <% @board.errors.full_messages.each do |message| %>
                 <li><%= message %></li>
               <% end %>
@@ -241,31 +274,31 @@ end
       
       <div class="col-md-6">
         <%= form.label :email, class: "form-label" %>
-        <%= form.email_field :email, class: "form-control", required: true %>
+        <%= form.email_field :email, class: "form-control", required: true, placeholder: "your.email@example.com" %>
       </div>
       
       <div class="col-md-6">
         <%= form.label :name, "Board Name", class: "form-label" %>
-        <%= form.text_field :name, class: "form-control", required: true %>
+        <%= form.text_field :name, class: "form-control", required: true, placeholder: "My Minesweeper Board" %>
       </div>
       
       <div class="col-md-4">
         <%= form.label :width, "Board Width", class: "form-label" %>
-        <%= form.number_field :width, class: "form-control", min: 1, required: true %>
+        <%= form.number_field :width, class: "form-control", min: 1, max: 50, required: true, placeholder: "10" %>
       </div>
       
       <div class="col-md-4">
         <%= form.label :height, "Board Height", class: "form-label" %>
-        <%= form.number_field :height, class: "form-control", min: 1, required: true %>
+        <%= form.number_field :height, class: "form-control", min: 1, max: 50, required: true, placeholder: "10" %>
       </div>
       
       <div class="col-md-4">
         <%= form.label :mines_count, "Number of Mines", class: "form-label" %>
-        <%= form.number_field :mines_count, class: "form-control", min: 1, required: true %>
+        <%= form.number_field :mines_count, class: "form-control", min: 1, required: true, placeholder: "10" %>
       </div>
       
       <div class="col-12">
-        <%= form.submit "Generate Board", class: "btn btn-primary" %>
+        <%= form.submit "Generate Board", class: "btn btn-primary btn-lg" %>
       </div>
     <% end %>
   </div>
@@ -285,7 +318,7 @@ end
             <small><%= board.created_at.strftime("%B %d, %Y at %I:%M %p") %></small>
           </div>
           <p class="mb-1">Created by: <%= board.email %></p>
-          <small>Dimensions: <%= board.width %>x<%= board.height %>, Mines: <%= board.mines_count %></small>
+          <small>Dimensions: <%= board.width %>×<%= board.height %>, Mines: <%= board.mines_count %></small>
         <% end %>
       <% end %>
     </div>
@@ -294,25 +327,30 @@ end
       <%= link_to "view all generated boards", all_boards_path, class: "btn btn-outline-secondary" %>
     </div>
   <% else %>
-    <p class="text-muted">No boards generated yet. Create the first one above!</p>
+    <div class="alert alert-info">
+      <strong>No boards generated yet.</strong> Create the first one using the form above!
+    </div>
   <% end %>
 </section>
 ```
 
-### 5.4 板子詳情頁
+### 5.4 Board Details Page
 ```erb
 <!-- app/views/boards/show.html.erb -->
 <div class="row">
   <div class="col-md-8">
     <h1><%= @board.name %></h1>
-    <p class="text-muted">Created by: <%= @board.email %></p>
-    <p class="text-muted">Created at: <%= @board.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
-    <p class="text-muted">Dimensions: <%= @board.width %>x<%= @board.height %>, Mines: <%= @board.mines_count %></p>
+    <div class="mb-3">
+      <p class="text-muted mb-1">Created by: <strong><%= @board.email %></strong></p>
+      <p class="text-muted mb-1">Created at: <%= @board.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+      <p class="text-muted">Dimensions: <strong><%= @board.width %>×<%= @board.height %></strong>, Mines: <strong><%= @board.mines_count %></strong></p>
+    </div>
   </div>
 </div>
 
 <div class="mt-4">
   <h4>Minesweeper Board</h4>
+  <p class="text-muted">○ = Empty cell, ● = Mine</p>
   
   <div class="board-container" style="overflow-x: auto;">
     <div class="board-grid" style="
@@ -323,82 +361,100 @@ end
       background-color: #ccc;
       padding: 1px;
       width: fit-content;
-      font-family: monospace;
+      margin: 20px 0;
     ">
       <% JSON.parse(@board.board_data).each do |row| %>
         <% row.each do |cell| %>
-          <div class="cell" style="
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: <%= cell['mine'] ? '#dc3545' : '#f8f9fa' %>;
-            color: <%= cell['mine'] ? 'white' : '#333' %>;
-            font-size: 16px;
-            font-weight: bold;
-          ">
+          <div class="cell <%= cell['mine'] ? 'mine' : 'empty' %>">
             <%= cell['mine'] ? '●' : '○' %>
           </div>
         <% end %>
       <% end %>
     </div>
   </div>
+  
+  <div class="mt-3">
+    <small class="text-muted">
+      Total cells: <%= @board.width * @board.height %> | 
+      Mine density: <%= ((@board.mines_count.to_f / (@board.width * @board.height)) * 100).round(1) %>%
+    </small>
+  </div>
 </div>
 
 <div class="mt-4">
   <%= link_to "Back to Home", root_path, class: "btn btn-secondary" %>
   <%= link_to "View All Boards", all_boards_path, class: "btn btn-outline-secondary" %>
+  <%= link_to "Generate New Board", root_path, class: "btn btn-primary" %>
 </div>
 ```
 
-### 5.5 所有板子頁面
+### 5.5 All Boards Page
 ```erb
 <!-- app/views/boards/all.html.erb -->
 <h1>All Generated Boards</h1>
+<p class="text-muted">Complete list of all minesweeper boards generated in the system</p>
 
 <% if @boards.any? %>
   <div class="table-responsive">
     <table class="table table-striped">
-      <thead>
+      <thead class="table-dark">
         <tr>
           <th>Board Name</th>
           <th>Creator Email</th>
           <th>Dimensions</th>
           <th>Mines</th>
+          <th>Mine Density</th>
           <th>Created At</th>
         </tr>
       </thead>
       <tbody>
         <% @boards.each do |board| %>
           <tr>
-            <td><%= link_to board.name, board %></td>
+            <td>
+              <%= link_to board.name, board, class: "text-decoration-none" %>
+            </td>
             <td><%= board.email %></td>
-            <td><%= board.width %>x<%= board.height %></td>
+            <td><%= board.width %>×<%= board.height %></td>
             <td><%= board.mines_count %></td>
+            <td>
+              <%= ((board.mines_count.to_f / (board.width * board.height)) * 100).round(1) %>%
+            </td>
             <td><%= board.created_at.strftime("%B %d, %Y") %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
+  
+  <div class="mt-3">
+    <p class="text-muted">Total boards generated: <strong><%= @boards.count %></strong></p>
+  </div>
 <% else %>
-  <p class="text-muted">No boards have been generated yet.</p>
-  <%= link_to "Generate First Board", root_path, class: "btn btn-primary" %>
+  <div class="alert alert-info">
+    <h4 class="alert-heading">No boards found</h4>
+    <p>No minesweeper boards have been generated yet.</p>
+    <hr>
+    <p class="mb-0">
+      <%= link_to "Generate the first board", root_path, class: "btn btn-primary" %>
+    </p>
+  </div>
 <% end %>
 
-<div class="mt-3">
+<div class="mt-4">
   <%= link_to "Back to Home", root_path, class: "btn btn-secondary" %>
+  <% if @boards.any? %>
+    <%= link_to "Generate New Board", root_path, class: "btn btn-primary" %>
+  <% end %>
 </div>
 ```
 
-## 6. Docker 部署規格
+## 6. Docker Deployment Specification
 
 ### 6.1 Dockerfile
 ```dockerfile
 FROM ruby:3.2-alpine
 
-# 安裝系統依賴
+# Install system dependencies
 RUN apk add --no-cache \
     build-base \
     sqlite-dev \
@@ -406,28 +462,25 @@ RUN apk add --no-cache \
     yarn \
     tzdata
 
-# 設置工作目錄
+# Set working directory
 WORKDIR /app
 
-# 複製 Gemfile 並安裝 gems
+# Copy Gemfile and install gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle config --global frozen 1 && \
     bundle install --without development test
 
-# 複製應用程式碼
+# Copy application code
 COPY . .
 
-# 編譯 assets
-RUN RAILS_ENV=production bundle exec rails assets:precompile
-
-# 創建資料庫目錄並設置權限
+# Create database directory and set permissions
 RUN mkdir -p /app/db && \
     chmod 755 /app/db
 
-# 暴露端口
+# Expose port
 EXPOSE 3000
 
-# 啟動腳本
+# Entry point script
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
@@ -446,7 +499,7 @@ services:
       - "3000:3000"
     environment:
       - RAILS_ENV=production
-      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-default_secret_key_for_development}
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
     volumes:
@@ -464,16 +517,16 @@ volumes:
 #!/bin/sh
 set -e
 
-# 等待資料庫目錄準備就緒
+# Wait for database directory to be ready
 until [ -d "/app/db" ]; do
   echo "Waiting for db directory..."
   sleep 1
 done
 
-# 設置資料庫權限
+# Set database permissions
 chown -R $(whoami):$(whoami) /app/db || true
 
-# 如果資料庫不存在，則創建並遷移
+# Create and migrate database if it doesn't exist
 if [ ! -f "/app/db/production.sqlite3" ]; then
   echo "Initializing database..."
   bundle exec rails db:create RAILS_ENV=production
@@ -483,81 +536,85 @@ else
   bundle exec rails db:migrate RAILS_ENV=production
 fi
 
-# 啟動應用
+# Precompile assets
+echo "Precompiling assets..."
+bundle exec rails assets:precompile RAILS_ENV=production
+
+# Start application
 exec "$@"
 ```
 
-## 7. 開發任務清單
+## 7. Development Task List
 
-### Phase 1: Rails 應用初始化
-1. 初始化 Rails 7 應用
-2. 配置 Gemfile（SQLite, Bootstrap, 等）
-3. 設置基本路由
+### Phase 1: Rails Application Initialization
+1. Initialize Rails 7 application
+2. Configure Gemfile (SQLite, Bootstrap, etc.)
+3. Set up basic routing
 
-### Phase 2: 後端開發
-1. 創建 Board model 和 migration
-2. 實作 MinesweeperGenerator 服務
-3. 實作 BoardsController
-4. 添加表單驗證
+### Phase 2: Backend Development
+1. Create Board model and migration
+2. Implement MinesweeperGenerator service
+3. Implement BoardsController
+4. Add form validations
 
-### Phase 3: 前端開發
-1. 設置 application layout 和 Bootstrap
-2. 實作 boards/index view（首頁）
-3. 實作 boards/show view（板子詳情）
-4. 實作 boards/all view（所有板子）
-5. 添加 CSS 樣式
+### Phase 3: Frontend Development
+1. Set up application layout and Bootstrap
+2. Implement boards/index view (home page)
+3. Implement boards/show view (board details)
+4. Implement boards/all view (all boards)
+5. Add CSS styling
 
-### Phase 4: Docker 配置
-1. 創建 Dockerfile
-2. 設置 docker-compose.yml
-3. 配置 entrypoint.sh
-4. 環境變數配置
+### Phase 4: Docker Configuration
+1. Create Dockerfile
+2. Set up docker-compose.yml
+3. Configure entrypoint.sh
+4. Environment variable configuration
 
-### Phase 5: 測試和優化
-1. 功能測試
-2. 效能測試（大型板子）
-3. UI/UX 測試
-4. Docker 部署測試
+### Phase 5: Testing and Optimization
+1. Functional testing
+2. Performance testing (large boards)
+3. UI/UX testing
+4. Docker deployment testing
 
-## 8. 測試計畫
+## 8. Testing Plan
 
-### 8.1 功能測試項目
-- [ ] 表單驗證（email 格式、數字範圍、地雷數量限制）
-- [ ] 板子生成演算法正確性
-- [ ] 視覺化展示正確性（○ ● 符號對應）
-- [ ] 資料庫儲存和讀取
-- [ ] 頁面導航功能
-- [ ] 最近 10 筆板子顯示
-- [ ] 所有板子列表功能
+### 8.1 Functional Test Items
+- [ ] Form validation (email format, numeric ranges, mine count limits)
+- [ ] Board generation algorithm correctness
+- [ ] Visual display correctness (○ ● symbol mapping)
+- [ ] Database storage and retrieval
+- [ ] Page navigation functionality
+- [ ] Recent 10 boards display
+- [ ] All boards list functionality
 
-### 8.2 效能測試項目
-- [ ] 小型板子生成（10x10, 10 mines）
-- [ ] 中型板子生成（20x20, 50 mines）
-- [ ] 大型板子生成（50x50, 500 mines）
-- [ ] 頁面載入速度
-- [ ] 資料庫查詢效能
+### 8.2 Performance Test Items
+- [ ] Small board generation (10x10, 10 mines)
+- [ ] Medium board generation (20x20, 50 mines)
+- [ ] Large board generation (50x50, 500 mines)
+- [ ] Page load speed
+- [ ] Database query performance
 
-### 8.3 部署測試項目
-- [ ] Docker 容器建構成功
-- [ ] 資料庫持久化驗證
-- [ ] 環境變數配置正確
-- [ ] 應用啟動成功
-- [ ] 所有功能在容器中正常運作
+### 8.3 Deployment Test Items
+- [ ] Docker container builds successfully
+- [ ] Database persistence verification
+- [ ] Environment variable configuration correctness
+- [ ] Application startup success
+- [ ] All functionality works correctly in containers
 
-## 9. 成功標準
+## 9. Success Criteria
 
-✅ 完全符合 Requirement.md 中的所有功能需求  
-✅ 自製地雷生成演算法，不使用外部 gems  
-✅ 清晰的 ○ ● 視覺化展示  
-✅ 響應式 Bootstrap UI  
-✅ SQLite 資料持久化  
-✅ Docker Compose 部署就緒  
-✅ 所有測試項目通過  
+✅ Full compliance with all functional requirements  
+✅ Custom mine generation algorithm without external gems  
+✅ Clear ○ ● visual display  
+✅ Responsive Bootstrap UI  
+✅ SQLite data persistence  
+✅ Docker Compose deployment ready  
+✅ All test items passing  
 
 ---
 
-**注意事項**：
-- 此規格專注於符合需求，避免過度設計
-- 演算法使用 Array.sample() 確保 O(n) 效能
-- 前端使用標準 Rails ERB + Bootstrap，無複雜 JavaScript
-- Docker 配置適合生產環境部署
+**Implementation Notes**:
+- This specification focuses on meeting requirements while avoiding over-engineering
+- Algorithm uses Array.sample() to ensure O(n) performance
+- Frontend uses standard Rails ERB + Bootstrap without complex JavaScript
+- Docker configuration suitable for production environment deployment
