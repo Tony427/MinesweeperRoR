@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   web:
     build: .
     ports:
       - "3000:3000"
     environment:
-      - RAILS_ENV=production
+      - RAILS_ENV=development
       - SECRET_KEY_BASE=${SECRET_KEY_BASE:-default_secret_key_for_development}
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
@@ -14,6 +12,7 @@ services:
       - sqlite_data:/app/db
       - ./log:/app/log
     restart: unless-stopped
+    command: sh -c "mkdir -p tmp/pids && RAILS_ENV=development bundle exec puma -C config/puma.rb"
 
 volumes:
   sqlite_data:

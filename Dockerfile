@@ -1,4 +1,4 @@
-FROM ruby:3.2-alpine
+FROM ruby:3.2.1-alpine
 
 # 安裝系統依賴
 RUN apk add --no-cache \
@@ -12,23 +12,19 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 # 複製 Gemfile 並安裝 gems
-COPY Gemfile Gemfile.lock ./
-RUN bundle config --global frozen 1 && \
-    bundle install --without development test
+COPY Gemfile* ./
+RUN bundle install
 
 # 複製應用程式碼
 COPY . .
 
-# 創建資料庫目錄並設置權限
-RUN mkdir -p /app/db && \
-    chmod 755 /app/db
+# 創建資料庫目錄並設置權限並生成Rails binstubs
+RUN mkdir -p /app/db /app/tmp/pids && \
+    chmod 755 /app/db && \
+    bundle exec rake app:update:bin || true
 
 # 暴露端口
 EXPOSE 3000
 
-# 啟動腳本
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-
+# 啟動命令
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
