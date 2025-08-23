@@ -4,35 +4,37 @@ echo =============================================
 echo.
 
 REM Check if Ruby is installed
-ruby -v >nul 2>&1
+echo 🔍 Checking Ruby installation...
+ruby -v >NUL 2>&1
 if errorlevel 1 (
     echo ❌ Ruby not found! Please install Ruby first.
     echo Visit: https://rubyinstaller.org/
     pause
     exit /b 1
+) else (
+    echo ✅ Ruby is installed
 )
 
-REM Check if bundle is available
-bundle --version >nul 2>&1
-if errorlevel 1 (
-    echo 📦 Installing bundler...
-    gem install bundler
-)
+REM Skip bundle check as it can hang in PowerShell
+echo ✅ Bundler check skipped (assumed installed)
 
 REM Install dependencies if needed
+echo 🔍 Checking gem dependencies...
 if not exist "Gemfile.lock" (
     echo 📦 Installing gems...
     bundle install
+) else (
+    echo ✅ Gems already installed
 )
 
-REM Check if database exists
-if not exist "db\development.sqlite3" (
-    echo 🗄️ Setting up database...
-    bundle exec rails db:create db:migrate db:seed
-)
+REM Setup database and run migrations
+echo 🗄️ Setting up database and running migrations...
+rails db:create
+rails db:migrate
+echo ✅ Database setup completed
 
 echo 🌟 Starting Rails server on http://localhost:3001
 echo Press Ctrl+C to stop the server
 echo.
 
-bundle exec rails server -p 3001
+rails server -p 3001
