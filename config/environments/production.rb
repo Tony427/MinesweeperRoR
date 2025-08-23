@@ -20,12 +20,12 @@ Rails.application.configure do
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
-  # Disable serving static files from the `/public` folder by default since
-  # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  # Enable serving static files from the `/public` folder for Heroku
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present? || ENV['HEROKU_APP_NAME'].present?
 
   # Compress CSS using a preprocessor.
-  # config.assets.css_compressor = :sass
+  config.assets.css_compressor = :sass
+  config.assets.js_compressor = :terser
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
@@ -46,7 +46,7 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\\/\\/example.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # Include generic and useful information about system operation, but avoid logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII).
@@ -55,12 +55,16 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  # Use Redis cache store in production for better performance
+  config.cache_store = :redis_cache_store, { 
+    url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"),
+    expires_in: 1.hour,
+    race_condition_ttl: 10.seconds
+  }
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "minesweeper_ror_production"
+  config.active_job.queue_adapter = :resque if ENV["REDIS_URL"].present?
+  config.active_job.queue_name_prefix = "minesweeper_ror_production"
 
   config.action_mailer.perform_caching = false
 
@@ -105,7 +109,7 @@ Rails.application.configure do
   # config.active_record.verbose_query_logs = true if ENV["ENABLE_QUERY_LOGS"].present?
   
   # Configure custom log levels for different components
-  config.logger.level = ENV.fetch("LOG_LEVEL", "info").to_sym
+  config.log_level = ENV.fetch("LOG_LEVEL", "info").to_sym
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
@@ -130,4 +134,21 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+  
+  # Production-specific configurations for Heroku
+  # Configure Action Cable for production
+  config.action_cable.url = ENV.fetch("ACTION_CABLE_URL", "wss://#{ENV['HEROKU_APP_NAME']}.herokuapp.com/cable") if ENV['HEROKU_APP_NAME']
+  config.action_cable.allowed_request_origins = [
+    /https:\/\/.*\.herokuapp\.com/,
+    /https:\/\/#{ENV['HEROKU_APP_NAME']}\.herokuapp\.com/
+  ] if ENV['HEROKU_APP_NAME']
+  
+  # Asset configuration for production
+  config.public_file_server.headers = {
+    'Cache-Control' => 'public, s-maxage=31536000, maxage=15552000',
+    'Expires' => "#{1.year.from_now.to_formatted_s(:rfc822)}"
+  }
+  
+  # Enable memory profiling (optional)
+  # config.active_support.report_deprecations = false
 end
