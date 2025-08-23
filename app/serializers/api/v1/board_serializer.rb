@@ -8,11 +8,15 @@ class Api::V1::BoardSerializer
       id: @board.id,
       name: @board.name,
       email: @board.email,
-      dimensions: {
+      dimensions: @board.dimensions&.to_h || {
         width: @board.width,
         height: @board.height
       },
-      mines_count: @board.mines_count,
+      mines: @board.mine_count_object&.to_h || {
+        count: @board.mines_count
+      },
+      difficulty: @board.difficulty,
+      mine_percentage: @board.mine_percentage,
       board_data: parse_board_data,
       created_at: @board.created_at,
       updated_at: @board.updated_at,
@@ -27,11 +31,12 @@ class Api::V1::BoardSerializer
     {
       id: @board.id,
       name: @board.name,
-      dimensions: {
+      dimensions: @board.dimensions&.to_h || {
         width: @board.width,
         height: @board.height
       },
       mines_count: @board.mines_count,
+      difficulty: @board.difficulty,
       created_at: @board.created_at,
       links: {
         self: "/api/v1/boards/#{@board.id}"
