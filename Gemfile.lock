@@ -108,6 +108,7 @@ GEM
     erb (5.0.2)
     erubi (1.13.1)
     ffi (1.17.2-x64-mingw-ucrt)
+    ffi (1.17.2-x86_64-linux-musl)
     globalid (1.2.1)
       activesupport (>= 6.1)
     i18n (1.14.7)
@@ -156,6 +157,8 @@ GEM
       net-protocol
     nio4r (2.7.4)
     nokogiri (1.18.9-x64-mingw-ucrt)
+      racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-musl)
       racc (~> 1.4)
     pp (0.6.2)
       prettyprint
@@ -272,6 +275,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux-musl
 
 DEPENDENCIES
   bootsnap
