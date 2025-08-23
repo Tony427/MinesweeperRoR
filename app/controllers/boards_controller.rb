@@ -1,34 +1,31 @@
 class BoardsController < ApplicationController
   def index
     @board = Board.new
-    @recent_boards = Board.latest_ten
+    @recent_boards = Application::Boards::BoardQueryService.latest_ten_boards
   end
 
   def show
-    @board = Board.find(params[:id])
+    @board = Application::Boards::BoardQueryService.find_board(params[:id])
+  rescue Errors::NotFoundError
+    redirect_to boards_path, alert: 'Board not found'
   end
 
   def create
-    @board = Board.new(board_params)
+    service = Application::Boards::CreateBoardService.new(board_params)
+    result = service.call
     
-    if @board.valid?
-      generator = MinesweeperGenerator.new(@board.width, @board.height, @board.mines_count)
-      @board.board_data = generator.generate.to_json
-      
-      if @board.save
-        redirect_to @board, notice: 'Board generated successfully!'
-      else
-        @recent_boards = Board.latest_ten
-        render :index, status: :unprocessable_entity
-      end
+    if result[:success]
+      @board = result[:board]
+      redirect_to @board, notice: result[:message]
     else
-      @recent_boards = Board.latest_ten
+      @board = result[:board]
+      @recent_boards = Application::Boards::BoardQueryService.latest_ten_boards
       render :index, status: :unprocessable_entity
     end
   end
 
   def all
-    @boards = Board.recent
+    @boards = Application::Boards::BoardQueryService.recent_boards
   end
 
   private
