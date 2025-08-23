@@ -4,7 +4,6 @@ class Board < ApplicationRecord
   validates :width, presence: true, numericality: { greater_than: 0 }
   validates :height, presence: true, numericality: { greater_than: 0 }
   validates :mines_count, presence: true, numericality: { greater_than: 0 }
-  validates :board_data, presence: true
 
   validate :mines_count_within_board_size
 
