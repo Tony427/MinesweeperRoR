@@ -1,4 +1,4 @@
-class BoardsController < ApplicationController
+class Web::BoardsController < Web::BaseController
   def index
     @board = Board.new
     @recent_boards = Application::Boards::BoardQueryService.latest_ten_boards
@@ -16,7 +16,7 @@ class BoardsController < ApplicationController
     
     if result[:success]
       @board = result[:board]
-      redirect_to @board, notice: result[:message]
+      redirect_to board_path(@board), notice: result[:message]
     else
       @board = result[:board]
       @recent_boards = Application::Boards::BoardQueryService.latest_ten_boards
