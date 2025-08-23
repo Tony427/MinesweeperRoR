@@ -45,6 +45,9 @@ gem "bootsnap", require: false
 # Use Sass to process CSS
 gem "sassc-rails"
 
+# Bootstrap for styling
+gem "bootstrap", "~> 5.3"
+
 # Use image_processing for variant generation
 gem "image_processing", "~> 1.2"
 
