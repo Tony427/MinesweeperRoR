@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.4.5"
+ruby "3.3.0"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.1.0"
@@ -9,8 +9,11 @@ gem "rails", "~> 7.1.0"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails", ">= 3.4.0"
 
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
+# Use sqlite3 as the database for Active Record in development
+gem "sqlite3", "~> 1.4", group: [:development, :test]
+
+# Use PostgreSQL as the database for production and staging
+gem "pg", "~> 1.5", group: [:production, :staging]
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 6.0"
@@ -72,4 +75,16 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+end
+
+# Heroku specific gems
+group :production, :staging do
+  # Heroku requires a JavaScript runtime
+  gem "mini_racer"
+  
+  # Heroku logging and monitoring
+  gem "rails_12factor"
+  
+  # For better asset handling in production
+  gem "sprockets", "~> 4.0"
 end
