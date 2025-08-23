@@ -9,6 +9,10 @@ class Board < ApplicationRecord
 
   scope :recent, -> { order(created_at: :desc) }
   scope :latest_ten, -> { recent.limit(10) }
+  
+  def self.repository
+    @repository ||= BoardRepository.new(self)
+  end
 
   private
 

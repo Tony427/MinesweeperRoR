@@ -1,6 +1,7 @@
 class Application::Boards::CreateBoardService
-  def initialize(board_params, minesweeper_generator: MinesweeperGenerator)
+  def initialize(board_params, repository: BoardRepository.new, minesweeper_generator: MinesweeperGenerator)
     @board_params = board_params
+    @repository = repository
     @minesweeper_generator = minesweeper_generator
   end
 
@@ -12,7 +13,7 @@ class Application::Boards::CreateBoardService
     generator = @minesweeper_generator.new(board.width, board.height, board.mines_count)
     board.board_data = generator.generate.to_json
     
-    if board.save
+    if @repository.save(board)
       success_result(board)
     else
       failure_result(board)
