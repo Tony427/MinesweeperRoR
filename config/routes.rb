@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root 'web/boards#index'
   
+  # Health check endpoint for monitoring
+  get 'health', to: 'application#health'
+  
   # Test route
   get 'test', to: 'test#index'
   

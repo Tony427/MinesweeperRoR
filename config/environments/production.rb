@@ -93,6 +93,19 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
+  
+  # Structured logging configuration
+  config.log_tags = [ 
+    :request_id,
+    -> req { "IP:#{req.remote_ip}" },
+    -> req { "User-Agent:#{req.user_agent&.truncate(50)}" }
+  ]
+  
+  # Enable detailed query logging in production if needed
+  # config.active_record.verbose_query_logs = true if ENV["ENABLE_QUERY_LOGS"].present?
+  
+  # Configure custom log levels for different components
+  config.logger.level = ENV.fetch("LOG_LEVEL", "info").to_sym
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

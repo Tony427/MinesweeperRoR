@@ -30,14 +30,42 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 # Workers do not work on JRuby or Windows (both of which do not support
 # processes).
 #
-# workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+# Enable clustering in production and staging environments
+if ENV.fetch("RAILS_ENV") { "development" } != "development"
+  workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+  
+  # Use the `preload_app!` method when specifying a `workers` number.
+  # This directive tells Puma to first boot the application and load code
+  # before forking the application. This takes advantage of Copy On Write
+  # process behavior so workers use less memory.
+  preload_app!
+  
+  # Worker configuration for production
+  worker_boot_timeout 60
+  worker_shutdown_timeout 30
+  
+  # Redirect worker stdout/stderr to log files in production
+  stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true if ENV.fetch("RAILS_ENV") == "production"
+else
+  # Single worker in development for easier debugging
+  workers 0
+end
 
-# Use the `preload_app!` method when specifying a `workers` number.
-# This directive tells Puma to first boot the application and load code
-# before forking the application. This takes advantage of Copy On Write
-# process behavior so workers use less memory.
-#
-# preload_app!
+# Configure queue requests for better throughput
+queue_requests true
+
+# Set the backlog for pending connections
+backlog 1024
+
+# Bind configuration - allow binding to specific interface
+bind_to = ENV.fetch("PUMA_BIND") { "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}" }
+bind bind_to unless bind_to == "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
+
+# Performance tuning
+nakayoshi_fork if ENV.fetch("RAILS_ENV") != "development"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
+
+# Add health check endpoint
+plugin :status
