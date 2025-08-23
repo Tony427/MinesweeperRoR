@@ -70,7 +70,7 @@ class ValueObjects::MineCount
   private
 
   def validate!
-    raise Errors::ValidationError.new(errors, "Invalid mine count: #{errors.join(', ')}") unless valid?
+    raise ::Errors::ValidationError.new(errors, "Invalid mine count: #{errors.join(', ')}") unless valid?
   end
 
   def count_valid?

@@ -57,7 +57,7 @@ class ValueObjects::BoardDimensions
   private
 
   def validate!
-    raise Errors::ValidationError.new(errors, "Invalid board dimensions: #{errors.join(', ')}") unless valid?
+    raise ::Errors::ValidationError.new(errors, "Invalid board dimensions: #{errors.join(', ')}") unless valid?
   end
 
   def width_valid?

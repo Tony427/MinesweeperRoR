@@ -6,7 +6,7 @@ class Web::BoardsController < Web::BaseController
 
   def show
     @board = Application::Boards::BoardQueryService.find_board(params[:id])
-  rescue Errors::NotFoundError
+  rescue ::Errors::NotFoundError
     redirect_to boards_path, alert: 'Board not found'
   end
 

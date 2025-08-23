@@ -6,7 +6,7 @@ class BoardRepository
   def find(id)
     @model.find(id)
   rescue ActiveRecord::RecordNotFound => e
-    raise Errors::NotFoundError, "Board with id #{id} not found"
+    raise ::Errors::NotFoundError, "Board with id #{id} not found"
   end
 
   def create(attributes)
@@ -48,6 +48,6 @@ class BoardRepository
   def find_by!(conditions)
     @model.find_by!(conditions)
   rescue ActiveRecord::RecordNotFound => e
-    raise Errors::NotFoundError, "Board not found with conditions: #{conditions}"
+    raise ::Errors::NotFoundError, "Board not found with conditions: #{conditions}"
   end
 end

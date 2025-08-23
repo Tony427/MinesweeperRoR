@@ -18,14 +18,14 @@ class Board < ApplicationRecord
 
   def dimensions
     @dimensions ||= ValueObjects::BoardDimensions.new(width, height)
-  rescue Errors::ValidationError
+  rescue ::Errors::ValidationError
     nil
   end
 
   def mine_count_object
     return nil unless dimensions
     @mine_count_object ||= ValueObjects::MineCount.new(mines_count, dimensions.max_mines)
-  rescue Errors::ValidationError
+  rescue ::Errors::ValidationError
     nil
   end
 
@@ -59,7 +59,7 @@ class Board < ApplicationRecord
     
     begin
       ValueObjects::BoardDimensions.new(width, height)
-    rescue Errors::ValidationError => e
+    rescue ::Errors::ValidationError => e
       errors.add(:base, "Invalid board dimensions: #{e.message}")
     end
   end
@@ -70,7 +70,7 @@ class Board < ApplicationRecord
     begin
       dimensions = ValueObjects::BoardDimensions.new(width, height)
       ValueObjects::MineCount.new(mines_count, dimensions.max_mines)
-    rescue Errors::ValidationError => e
+    rescue ::Errors::ValidationError => e
       errors.add(:mines_count, e.message)
     end
   end

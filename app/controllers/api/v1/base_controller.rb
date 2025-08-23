@@ -2,9 +2,9 @@ class Api::V1::BaseController < ApplicationController
   protect_from_forgery with: :null_session
   before_action :ensure_json_request
 
-  rescue_from Errors::DomainError, with: :handle_domain_error
-  rescue_from Errors::ValidationError, with: :handle_validation_error
-  rescue_from Errors::NotFoundError, with: :handle_not_found_error
+  rescue_from ::Errors::DomainError, with: :handle_domain_error
+  rescue_from ::Errors::ValidationError, with: :handle_validation_error
+  rescue_from ::Errors::NotFoundError, with: :handle_not_found_error
   rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found_error
 
   private
