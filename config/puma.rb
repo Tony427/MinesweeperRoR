@@ -54,8 +54,7 @@ end
 # Configure queue requests for better throughput
 queue_requests true
 
-# Set the backlog for pending connections
-backlog 1024
+# Backlog option is no longer supported in newer Puma versions
 
 # Bind configuration - allow binding to specific interface
 bind_to = ENV.fetch("PUMA_BIND") { "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}" }
@@ -67,5 +66,4 @@ nakayoshi_fork if ENV.fetch("RAILS_ENV") != "development"
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
-# Add health check endpoint
-plugin :status
+# Health check endpoint plugin not available
