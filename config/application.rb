@@ -21,5 +21,8 @@ module MinesweeperRoR
     
     # Auto-load custom lib directories
     config.autoload_paths += %W[#{config.root}/lib]
+    
+    # Configure asset pipeline to include Bootstrap path from gem
+    config.assets.paths << Gem.loaded_specs['bootstrap'].full_gem_path + '/assets/stylesheets' rescue nil
   end
 end
