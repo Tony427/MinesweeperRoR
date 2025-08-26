@@ -1,20 +1,65 @@
 # Development Environment Startup Scripts
 
-## Usage
+Cross-platform development scripts for Windows and Unix-like systems (Linux/macOS).
+
+## Quick Start
+
+### Universal Starter (Recommended)
+**Windows:**
+```cmd
+scripts\start.bat [local|docker] [options]
+```
+
+**Unix-like (Linux/macOS):**
+```bash
+./scripts/start.sh [local|docker] [options]
+```
+
+**Examples:**
+```bash
+# Start local development server (default)
+scripts\start.bat              # Windows
+./scripts/start.sh             # Unix
+
+# Start local server on custom port
+scripts\start.bat local -p 3002
+./scripts/start.sh local -p 3002
+
+# Start with Docker
+scripts\start.bat docker
+./scripts/start.sh docker
+```
+
+## Platform-Specific Scripts
 
 ### Local Development Environment
-```bash
+
+**Windows:**
+```cmd
 scripts\local.bat
 ```
+
+**Unix-like (Linux/macOS):**
+```bash
+./scripts/local.sh
+```
+
 - Starts Rails server at `http://localhost:3001`
 - Uses local Ruby environment
 - Database: `db/development.sqlite3`
-- **Note**: Requires MSYS2 development toolchain for native gem compilation
 
-### Docker Development Environment  
-```bash
+### Docker Development Environment
+
+**Windows:**
+```cmd
 scripts\docker.bat
 ```
+
+**Unix-like (Linux/macOS):**
+```bash
+./scripts/docker.sh
+```
+
 - Starts Docker container at `http://localhost:3000`
 - Uses containerized Ruby environment
 - Database: Docker volume
@@ -22,13 +67,26 @@ scripts\docker.bat
 ## Prerequisites
 
 ### Local Environment
+
+**All Platforms:**
 - Ruby 3.4.5+ installed
 - Bundler gem installed
+
+**Windows-specific:**
 - **MSYS2 development toolchain** (for native gems like sqlite3, nio4r, etc.)
   - Install from: https://www.msys2.org/
   - Or run: `ridk install` (if using RubyInstaller)
 
+**Unix-like systems:**
+- Build tools: `gcc`, `make`, `pkg-config`
+- SQLite development headers
+  - Ubuntu/Debian: `sudo apt-get install build-essential libsqlite3-dev`
+  - macOS: Install Xcode Command Line Tools: `xcode-select --install`
+  - CentOS/RHEL: `sudo yum groupinstall "Development Tools" && sudo yum install sqlite-devel`
+
 ### Docker Environment
+
+**All Platforms:**
 - Docker Desktop installed and running
 - Docker Compose available
 
