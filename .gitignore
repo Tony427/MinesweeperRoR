@@ -35,11 +35,21 @@
 # Rails credentials and secrets
 /config/master.key
 /config/credentials/*.key
+/config/secrets.yml
+/config/database.yml.backup
+*.key
+*.pem
+*.p12
+*.keystore
 
-# Environment variables
+# Environment variables and sensitive data
 .env
 .env.local
 .env.*.local
+.env.production
+.env.staging
+.env.backup
+*.env
 
 # Bundler
 /.bundle/
@@ -121,3 +131,21 @@ test_algorithm.rb
 
 # Claude Code settings
 .claude/
+
+# Security and backup files
+*.backup
+*.bak
+*.tmp
+*.orig
+*.save
+*~
+
+# Docker secrets (if any)
+docker-compose.override.yml
+.docker/secrets/
+
+# Additional security patterns
+secrets.txt
+passwords.txt
+api_keys.txt
+credentials.txt
