@@ -1,0 +1,136 @@
+# Docker Compose Configuration for Production
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    
+    ports:
+      - "3000:3000"
+    
+    environment:
+      - RAILS_ENV=production
+      - RAILS_SERVE_STATIC_FILES=true
+      - RAILS_LOG_TO_STDOUT=true
+      - RAILS_MAX_THREADS=${RAILS_MAX_THREADS:-5}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+      # Security settings
+      - FORCE_SSL=true
+      - RAILS_REQUIRE_MASTER_KEY=true
+    
+    # Production volumes (minimal)
+    volumes:
+      - app_storage:/app/storage
+      - app_log:/app/log
+    
+    # Production command with precompiled assets
+    command: >
+      sh -c "
+        echo '🚀 Starting production Rails server...' &&
+        bundle exec rails assets:precompile &&
+        bundle exec rails db:create db:migrate &&
+        bundle exec puma -C config/puma.rb
+      "
+    
+    restart: unless-stopped
+    
+    # Production resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '1.0'
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    
+    depends_on:
+      - postgres
+      - redis
+    
+    networks:
+      - production_network
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-minesweeper_production}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_in_production}
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    
+    restart: unless-stopped
+    
+    # Production resource limits for PostgreSQL
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+    
+    # PostgreSQL health check
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    
+    networks:
+      - production_network
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-change_in_production}
+    
+    volumes:
+      - redis_data:/data
+    
+    restart: unless-stopped
+    
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD:-change_in_production}", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    
+    networks:
+      - production_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_storage:
+    driver: local
+  app_log:
+    driver: local
+
+networks:
+  production_network:
+    driver: bridge

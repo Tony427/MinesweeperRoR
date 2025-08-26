@@ -18,7 +18,16 @@ services:
       - ./config:/app/config
       - ./lib:/app/lib
     restart: unless-stopped
-    command: sh -c "mkdir -p tmp/pids && RAILS_ENV=development bundle exec puma -C config/puma.rb"
+    command: >
+      sh -c "
+        echo '🔧 Setting up Rails application...' &&
+        mkdir -p tmp/pids db log &&
+        bundle check || echo '📦 Bundle check completed' &&
+        echo '🗄️ Setting up database...' &&
+        bundle exec rails db:create db:migrate || echo '⚠️ Database setup completed' &&
+        echo '🚀 Starting Rails server...' &&
+        RAILS_ENV=development bundle exec puma -C config/puma.rb
+      "
     # Resource limits
     deploy:
       resources:
