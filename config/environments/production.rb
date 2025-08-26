@@ -18,7 +18,7 @@ Rails.application.configure do
 
   # Ensures that a master key has been made available in either ENV["RAILS_MASTER_KEY"]
   # or in config/master.key. This key is used to decrypt credentials (and other encrypted files).
-  # config.require_master_key = true
+  config.require_master_key = true
 
   # Enable serving static files from the `/public` folder for Heroku
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present? || ENV['HEROKU_APP_NAME'].present?
@@ -107,6 +107,26 @@ Rails.application.configure do
   
   # Enable detailed query logging in production if needed
   # config.active_record.verbose_query_logs = true if ENV["ENABLE_QUERY_LOGS"].present?
+  
+  # Additional security configurations
+  # Prevent host header injection
+  config.hosts << ENV['HEROKU_APP_NAME'] + '.herokuapp.com' if ENV['HEROKU_APP_NAME'].present?
+  
+  # Security headers
+  config.force_ssl = true
+  config.ssl_options = {
+    hsts: { 
+      expires: 1.year, 
+      include_subdomains: true, 
+      preload: true 
+    }
+  }
+  
+  # Disable server signature
+  config.public_file_server.headers = {
+    'Server' => '',
+    'X-Powered-By' => ''
+  }
   
   # Configure custom log levels for different components
   config.log_level = ENV.fetch("LOG_LEVEL", "info").to_sym
