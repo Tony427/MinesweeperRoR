@@ -191,6 +191,97 @@ docker run --rm \
   tar xzf /backup/boards_YYYYMMDD_HHMMSS.tar.gz -C /data
 ```
 
+## 🔐 Security Configuration
+
+### Environment Variables Setup
+
+This application follows Rails security best practices for handling sensitive data:
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Generate required secrets:**
+   ```bash
+   # Generate a new SECRET_KEY_BASE
+   bundle exec rails secret
+   
+   # Edit your .env file with the generated key
+   SECRET_KEY_BASE=your_generated_secret_key_here
+   ```
+
+### Rails Encrypted Credentials
+
+The application uses Rails 7 encrypted credentials system:
+
+- **Master Key**: `config/master.key` (never commit this file)
+- **Credentials**: `config/credentials.yml.enc` (encrypted, safe to commit)
+
+To edit credentials:
+```bash
+EDITOR="code --wait" rails credentials:edit
+```
+
+### Production Security Features
+
+- ✅ **SSL/HTTPS Enforced**: All traffic redirected to HTTPS
+- ✅ **HSTS Headers**: HTTP Strict Transport Security enabled
+- ✅ **Master Key Required**: Production requires valid master key
+- ✅ **Host Header Protection**: Prevents host header injection
+- ✅ **Secure Session Cookies**: HTTPS-only session management
+- ✅ **CSRF Protection**: Cross-site request forgery prevention
+- ✅ **SQL Injection Prevention**: Parameterized queries only
+
+### Heroku Deployment Security
+
+For Heroku deployment, ensure these environment variables are set:
+
+```bash
+# Set the master key from your local config/master.key
+heroku config:set RAILS_MASTER_KEY=$(cat config/master.key) -a your-app-name
+
+# Other recommended settings
+heroku config:set RAILS_SERVE_STATIC_FILES=true -a your-app-name
+heroku config:set RAILS_LOG_TO_STDOUT=enabled -a your-app-name
+```
+
+### Security Best Practices
+
+1. **Never commit sensitive files:**
+   - `config/master.key`
+   - `.env` files with real values
+   - Any files containing passwords, API keys, or secrets
+
+2. **Use environment-specific configurations:**
+   - Development: SQLite with local secrets
+   - Production: PostgreSQL with encrypted credentials
+   - Testing: Isolated test database
+
+3. **Regular security audits:**
+   ```bash
+   # Check for gem vulnerabilities
+   bundle audit
+   
+   # Rails security scanner
+   gem install brakeman
+   brakeman
+   ```
+
+### Troubleshooting Security Issues
+
+**Missing Master Key Error:**
+```bash
+# Generate new credentials if needed
+rm config/credentials.yml.enc
+EDITOR="code --wait" rails credentials:edit
+```
+
+**SSL Certificate Issues:**
+- Ensure your domain has valid SSL certificate
+- Check Heroku SSL configuration
+- Verify `config.force_ssl = true` in production
+
 ## ✅ Testing & Quality Assurance
 
 ### Test Coverage
