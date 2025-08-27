@@ -124,7 +124,7 @@ Rails.application.configure do
   ] if ENV['HEROKU_APP_NAME']
   
   # Asset configuration for Heroku
-  config.assets.js_compressor = :terser
+  config.assets.js_compressor = :uglifier
   config.assets.css_compressor = :sass
   config.public_file_server.headers = {
     'Cache-Control' => 'public, s-maxage=31536000, maxage=15552000',
