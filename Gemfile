@@ -12,8 +12,8 @@ gem "sprockets-rails", ">= 3.4.0"
 # Use sqlite3 as the database for Active Record in development
 gem "sqlite3", "~> 1.4", group: [:development, :test]
 
-# Use PostgreSQL as the database for production and staging
-gem "pg", "~> 1.5", group: [:production, :staging]
+# Use PostgreSQL as the database for production (Docker and Heroku)
+gem "pg", "~> 1.5", group: :production
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 6.0"
@@ -77,13 +77,10 @@ group :test do
   gem "webdrivers"
 end
 
-# Heroku specific gems
-group :production, :staging do
-  # Heroku requires a JavaScript runtime
+# Production specific gems (Docker and Heroku)
+group :production do
+  # JavaScript runtime for asset compilation
   gem "mini_racer"
-  
-  # JavaScript compressor for asset pipeline
-  gem "uglifier", ">= 1.3.0"
   
   # Heroku logging and monitoring
   gem "rails_12factor"

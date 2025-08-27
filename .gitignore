@@ -47,7 +47,6 @@
 .env.local
 .env.*.local
 .env.production
-.env.staging
 .env.backup
 *.env
 
