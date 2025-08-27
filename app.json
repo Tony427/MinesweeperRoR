@@ -7,8 +7,8 @@
   "success_url": "/",
   "env": {
     "RAILS_ENV": {
-      "description": "Rails environment (staging or production)",
-      "value": "staging"
+      "description": "Rails environment for production deployment",
+      "value": "production"
     },
     "RAILS_MASTER_KEY": {
       "description": "Rails master key for encrypted credentials",

@@ -4,14 +4,16 @@
   "version": "1.0.0",
   "description": "A Ruby on Rails Minesweeper game application",
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": "20.17.0",
+    "npm": "10.x"
   },
   "scripts": {
     "build": "echo 'No build step required for this Rails app'",
     "build:css": "echo 'CSS compilation handled by Rails asset pipeline'"
   },
-  "dependencies": {},
+  "dependencies": {
+    "terser": "^5.16.0"
+  },
   "devDependencies": {},
   "browserslist": [
     "defaults"

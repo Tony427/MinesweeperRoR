@@ -30,7 +30,7 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 # Workers do not work on JRuby or Windows (both of which do not support
 # processes).
 #
-# Enable clustering in production and staging environments
+# Enable clustering in production environment
 if ENV.fetch("RAILS_ENV") { "development" } != "development"
   workers ENV.fetch("WEB_CONCURRENCY") { 2 }
   
