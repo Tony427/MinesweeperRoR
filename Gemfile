@@ -82,6 +82,9 @@ group :production, :staging do
   # Heroku requires a JavaScript runtime
   gem "mini_racer"
   
+  # JavaScript compressor for asset pipeline
+  gem "uglifier", ">= 1.3.0"
+  
   # Heroku logging and monitoring
   gem "rails_12factor"
   
