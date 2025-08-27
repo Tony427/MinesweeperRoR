@@ -110,6 +110,7 @@ GEM
     erb (5.0.2)
     erubi (1.13.1)
     ffi (1.17.2-x64-mingw-ucrt)
+    ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -131,6 +132,7 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     libv8-node (24.1.0.0)
+    libv8-node (24.1.0.0-x86_64-linux)
     libv8-node (24.1.0.0-x86_64-linux-musl)
     logger (1.7.0)
     loofah (2.24.1)
@@ -164,9 +166,12 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.18.9-x64-mingw-ucrt)
       racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-gnu)
+      racc (~> 1.4)
     nokogiri (1.18.9-x86_64-linux-musl)
       racc (~> 1.4)
     pg (1.6.1-x64-mingw-ucrt)
+    pg (1.6.1-x86_64-linux)
     pg (1.6.1-x86_64-linux-musl)
     popper_js (2.11.8)
     pp (0.6.2)
@@ -289,6 +294,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
   x86_64-linux-musl
 
 DEPENDENCIES
