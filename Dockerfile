@@ -1,5 +1,5 @@
 # Build stage
-FROM ruby:3.3.6-alpine AS builder
+FROM ruby:3.4.3-alpine AS builder
 
 # Install build dependencies
 RUN apk add --no-cache \
@@ -28,7 +28,7 @@ COPY . .
 RUN bundle exec rake app:update:bin || true
 
 # Runtime stage
-FROM ruby:3.3.6-alpine AS runtime
+FROM ruby:3.4.3-alpine AS runtime
 
 # Install runtime dependencies only
 RUN apk add --no-cache \
