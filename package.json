@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "description": "A Ruby on Rails Minesweeper game application",
   "engines": {
-    "node": "18.20.0",
-    "npm": ">=8.0.0"
+    "node": "20.17.0",
+    "npm": "10.x"
   },
   "scripts": {
     "build": "echo 'No build step required for this Rails app'",
