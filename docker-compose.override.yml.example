@@ -1,6 +1,9 @@
 # Docker Compose Override for Development
 # This file is automatically loaded with docker-compose.yml
 # It provides development-specific configurations
+#
+# Copy this file to docker-compose.override.yml and customize as needed:
+# cp docker-compose.override.yml.example docker-compose.override.yml
 
 services:
   web:
