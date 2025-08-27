@@ -1,0 +1,22 @@
+// Game color variables
+:root {
+  --cell-size: 30px;
+  --cell-border: #ddd;
+  --cell-bg-hidden: #e9ecef;
+  --cell-bg-revealed: #f8f9fa;
+  --cell-bg-mine: #dc3545;
+  --cell-bg-flagged: #fff3cd;
+  --cell-bg-win-mine: #d4edda;
+  
+  --board-gap: 1px;
+  --board-padding: 1px;
+  --board-bg: #ccc;
+  
+  --game-border-radius: 4px;
+  --game-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Responsive breakpoints
+$mobile-max: 767px;
+$tablet-max: 991px;
+$desktop-min: 992px;

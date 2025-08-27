@@ -1,0 +1,44 @@
+// Game board component styles
+
+.game-board-container {
+  overflow-x: auto;
+  padding: 1rem 0;
+  
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: var(--game-border-radius);
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: var(--game-border-radius);
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+.game-board {
+  display: grid;
+  gap: var(--board-gap);
+  background-color: var(--board-bg);
+  padding: var(--board-padding);
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: var(--game-border-radius);
+  box-shadow: var(--game-shadow);
+  
+  // Dynamic grid sizing handled by Stimulus controller
+  &[data-board-width] {
+    grid-template-columns: repeat(var(--board-width), var(--cell-size));
+  }
+  
+  &[data-board-height] {
+    grid-template-rows: repeat(var(--board-height), var(--cell-size));
+  }
+}

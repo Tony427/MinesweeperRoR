@@ -1,0 +1,28 @@
+require_relative "boot"
+
+require "rails/all"
+
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
+
+module MinesweeperRoR
+  class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 7.1
+
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
+    # config.time_zone = "Central Time (US & Canada)"
+    # config.eager_load_paths << Rails.root.join("extras")
+    
+    # Auto-load custom lib directories
+    config.autoload_paths += %W[#{config.root}/lib]
+    
+    # Configure asset pipeline to include Bootstrap path from gem
+    config.assets.paths << Gem.loaded_specs['bootstrap'].full_gem_path + '/assets/stylesheets' rescue nil
+  end
+end

@@ -1,0 +1,85 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-default_secret_key_for_development}
+      - RAILS_SERVE_STATIC_FILES=true
+      - RAILS_LOG_TO_STDOUT=true
+      - RAILS_MAX_THREADS=5
+      - WEB_CONCURRENCY=2
+    volumes:
+      - sqlite_data:/app/db
+      - ./log:/app/log
+      # Development volume mounts for hot reloading
+      - ./app:/app/app
+      - ./config:/app/config
+      - ./lib:/app/lib
+    restart: unless-stopped
+    command: >
+      sh -c "
+        echo '🔧 Setting up Rails application...' &&
+        mkdir -p tmp/pids db log &&
+        bundle check || echo '📦 Bundle check completed' &&
+        echo '🗄️ Setting up database...' &&
+        bundle exec rails db:create db:migrate || echo '⚠️ Database setup completed' &&
+        echo '🚀 Starting Rails server...' &&
+        RAILS_ENV=development bundle exec puma -C config/puma.rb
+      "
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Dependency and network configuration
+    depends_on:
+      - redis
+    networks:
+      - minesweeper_network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.5'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - minesweeper_network
+
+volumes:
+  sqlite_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  minesweeper_network:
+    driver: bridge

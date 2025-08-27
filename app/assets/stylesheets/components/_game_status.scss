@@ -1,0 +1,52 @@
+// Game status component styles
+
+.game-status-bar {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: var(--game-border-radius);
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  
+  .status-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1rem;
+    
+    &:last-child {
+      margin-right: 0;
+    }
+    
+    .badge {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.6rem;
+    }
+  }
+}
+
+.game-timer {
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  text-align: right;
+}
+
+.mine-counter {
+  font-variant-numeric: tabular-nums;
+  min-width: 3ch;
+  text-align: right;
+}
+
+// Status-specific badge colors
+.badge-status-playing { background-color: #17a2b8; }
+.badge-status-won { background-color: #28a745; }
+.badge-status-lost { background-color: #dc3545; }
+
+// Animated elements
+.status-update {
+  animation: statusPulse 0.3s ease-in-out;
+}
+
+@keyframes statusPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}

@@ -1,3 +1,4 @@
+# Ruby/Rails core files
 *.gem
 *.rbc
 /.config
@@ -8,49 +9,143 @@
 /spec/examples.txt
 /test/tmp/
 /test/version_tmp/
-/tmp/
 
-# Used by dotenv library to load environment variables.
-# .env
+# Rails application logs and temporary files
+/log/*
+!/log/.keep
+/tmp/*
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
 
-# Ignore Byebug command history file.
+# Ignore uploaded files in development
+/storage/*
+!/storage/.keep
+
+# SQLite database files (development/test)
+/db/*.sqlite3
+/db/*.sqlite3-shm
+/db/*.sqlite3-wal
+/db/*.sqlite3-journal
+
+# Rails credentials and secrets
+/config/master.key
+/config/credentials/*.key
+/config/secrets.yml
+/config/database.yml.backup
+*.key
+*.pem
+*.p12
+*.keystore
+
+# Environment variables and sensitive data
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+.env.backup
+*.env
+
+# Bundler
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+
+# Asset compilation
+/public/assets/
+/public/packs/
+/public/packs-test/
+/public/vite/
+/app/assets/builds/
+
+# Node.js (if using with Rails)
+/node_modules/
+/yarn-error.log
+yarn-debug.log*
+npm-debug.log*
+.yarn-integrity
+
+# Ruby version managers
+.rvmrc
+.ruby-version
+.ruby-gemset
+
+# Debugging
 .byebug_history
+.rdbgrc.rb
 
-## Specific to RubyMotion:
-.dat*
-.repl_history
-build/
-*.bridgesupport
-build-iPhoneOS/
-build-iPhoneSimulator/
-
-## Specific to RubyMotion (use of CocoaPods):
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# vendor/Pods/
-
-## Documentation cache and generated files:
+# Documentation
 /.yardoc/
 /_yardoc/
 /doc/
 /rdoc/
 
-## Environment normalization:
-/.bundle/
-/vendor/bundle
-/lib/bundler/man/
+# RuboCop
+.rubocop-https?--*
 
-# for a library or gem, you might want to ignore these files since the code is
-# intended to run in multiple environments; otherwise, check them in:
-# Gemfile.lock
-# .ruby-version
-# .ruby-gemset
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
 
-# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
-.rvmrc
+# IDE and Editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.tmproj
+*.tmproject
+tmtags
 
-# Used by RuboCop. Remote config files pulled in from inherit_from directive.
-# .rubocop-https?--*
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Project-specific files
+# Original requirement document
+Requirement.md
+
+# Development testing scripts
+test_algorithm.rb
+
+# Claude Code settings
+.claude/
+
+# Security and backup files
+*.backup
+*.bak
+*.tmp
+*.orig
+*.save
+*~
+
+# Docker secrets (if any)
+docker-compose.override.yml
+.docker/secrets/
+
+# Additional security patterns
+secrets.txt
+passwords.txt
+api_keys.txt
+credentials.txt

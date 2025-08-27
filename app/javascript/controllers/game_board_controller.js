@@ -1,0 +1,164 @@
+// Game board interaction controller
+import { Controller } from "@hotwired/stimulus"
+import { DOMHelpers } from "../utils/dom_helpers.js"
+import { CellStyler } from "../utils/cell_styler.js"
+
+export default class extends Controller {
+  static targets = ["cell"]
+
+  connect() {
+    this.setupKeyboardNavigation()
+    this.preventContextMenu()
+    this.currentFocusRow = 0
+    this.currentFocusCol = 0
+  }
+
+  disconnect() {
+    this.removeKeyboardNavigation()
+  }
+
+  // Handle left click - reveal cell
+  reveal(event) {
+    event.preventDefault()
+    const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    
+    // Dispatch custom event to minesweeper controller
+    this.dispatch("reveal", { 
+      detail: { row, col, element: event.currentTarget }
+    })
+  }
+
+  // Handle right click - toggle flag
+  toggle(event) {
+    event.preventDefault()
+    const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    
+    // Dispatch custom event to minesweeper controller
+    this.dispatch("toggle", { 
+      detail: { row, col, element: event.currentTarget }
+    })
+  }
+
+  // Update single cell appearance
+  updateCell(row, col, state) {
+    const element = DOMHelpers.findCell(this.element, row, col)
+    if (!element) return
+
+    element.dataset.status = state.status
+    
+    switch (state.status) {
+      case 'revealed':
+        if (state.adjacentMines > 0) {
+          element.dataset.adjacent = state.adjacentMines
+        }
+        CellStyler.revealCell(element, state.adjacentMines)
+        break
+      case 'flagged':
+        CellStyler.flagCell(element)
+        break
+      case 'hidden':
+        CellStyler.unflagCell(element)
+        break
+      case 'mine':
+        CellStyler.showMine(element, state.isDetonated)
+        break
+      case 'win-mine':
+        CellStyler.showWinMine(element)
+        break
+    }
+  }
+
+  // Update multiple cells
+  updateCells(updates) {
+    updates.forEach(({ row, col, state }) => {
+      this.updateCell(row, col, state)
+    })
+  }
+
+  // Reset all cells to initial state
+  resetCells() {
+    this.cellTargets.forEach(cell => {
+      delete cell.dataset.status
+      delete cell.dataset.adjacent
+      CellStyler.resetCell(cell)
+    })
+  }
+
+  // Keyboard navigation setup
+  setupKeyboardNavigation() {
+    this.keyboardHandler = this.handleKeyboard.bind(this)
+    document.addEventListener('keydown', this.keyboardHandler)
+  }
+
+  removeKeyboardNavigation() {
+    if (this.keyboardHandler) {
+      document.removeEventListener('keydown', this.keyboardHandler)
+    }
+  }
+
+  handleKeyboard(event) {
+    if (!this.element.contains(document.activeElement) && 
+        !this.element.contains(event.target)) return
+
+    const maxRow = parseInt(this.data.get('height')) - 1
+    const maxCol = parseInt(this.data.get('width')) - 1
+
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault()
+        this.currentFocusRow = Math.max(0, this.currentFocusRow - 1)
+        this.focusCell()
+        break
+      case 'ArrowDown':
+        event.preventDefault()
+        this.currentFocusRow = Math.min(maxRow, this.currentFocusRow + 1)
+        this.focusCell()
+        break
+      case 'ArrowLeft':
+        event.preventDefault()
+        this.currentFocusCol = Math.max(0, this.currentFocusCol - 1)
+        this.focusCell()
+        break
+      case 'ArrowRight':
+        event.preventDefault()
+        this.currentFocusCol = Math.min(maxCol, this.currentFocusCol + 1)
+        this.focusCell()
+        break
+      case ' ':
+      case 'Enter':
+        event.preventDefault()
+        this.revealFocusedCell()
+        break
+      case 'f':
+      case 'F':
+        event.preventDefault()
+        this.toggleFocusedCell()
+        break
+    }
+  }
+
+  focusCell() {
+    const cell = DOMHelpers.findCell(this.element, this.currentFocusRow, this.currentFocusCol)
+    if (cell) {
+      cell.focus()
+    }
+  }
+
+  revealFocusedCell() {
+    const cell = DOMHelpers.findCell(this.element, this.currentFocusRow, this.currentFocusCol)
+    if (cell) {
+      cell.click()
+    }
+  }
+
+  toggleFocusedCell() {
+    const cell = DOMHelpers.findCell(this.element, this.currentFocusRow, this.currentFocusCol)
+    if (cell) {
+      this.toggle({ preventDefault: () => {}, currentTarget: cell })
+    }
+  }
+
+  preventContextMenu() {
+    this.element.addEventListener('contextmenu', (e) => e.preventDefault())
+  }
+}

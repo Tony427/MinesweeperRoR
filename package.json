@@ -1,0 +1,19 @@
+{
+  "name": "minesweeper-ror",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A Ruby on Rails Minesweeper game application",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "build": "echo 'No build step required for this Rails app'",
+    "build:css": "echo 'CSS compilation handled by Rails asset pipeline'"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": [
+    "defaults"
+  ]
+}

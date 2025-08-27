@@ -1,0 +1,136 @@
+# =============================================================================
+# Git and Version Control
+# =============================================================================
+.git
+.gitignore
+.github/
+
+# =============================================================================
+# Development Environment Files
+# =============================================================================
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Development databases and storage
+tmp/
+log/
+storage/
+public/assets/
+db/*.sqlite3*
+db/schema.rb
+
+# Rails specific temporary files
+tmp/cache/
+tmp/pids/
+tmp/sessions/
+tmp/sockets/
+tmp/storage/
+
+# =============================================================================
+# Documentation and Scripts
+# =============================================================================
+README.md
+*.md
+CHANGELOG*
+LICENSE*
+DEPLOYMENT_GUIDE.md
+
+# Development scripts (not needed in container)
+scripts/
+
+# =============================================================================
+# Testing and Coverage
+# =============================================================================
+test/
+spec/
+coverage/
+.rspec
+.simplecov
+
+# =============================================================================
+# Node.js and Frontend Assets (if any)
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn/
+package-lock.json
+yarn.lock
+
+# =============================================================================
+# IDE and Editor Files
+# =============================================================================
+.vscode/
+.idea/
+.vimrc
+*.swp
+*.swo
+*~
+.editorconfig
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# =============================================================================
+# OS-specific Files
+# =============================================================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows  
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+
+# =============================================================================
+# Temporary and Cache Files
+# =============================================================================
+*.tmp
+*.temp
+*.pid
+*.lock
+*.bak
+*.backup
+*.orig
+
+# Ruby/Rails cache files
+.byebug_history
+.ruby-version
+.rvmrc
+.rbenv-version
+
+# =============================================================================
+# Docker and Deployment
+# =============================================================================
+docker-compose.override.yml
+Dockerfile.*
+.dockerignore
+
+# Heroku
+.slugignore
+Procfile.dev
+
+# =============================================================================
+# Security and Credentials
+# =============================================================================
+# These should already be in .gitignore, but extra protection
+config/master.key
+config/credentials.yml.enc
+.credentials*
+*.pem
+*.key
+*.crt
+*.p12
