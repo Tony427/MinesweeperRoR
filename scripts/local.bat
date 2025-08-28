@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM Configuration
-set DEFAULT_PORT=3001
+set DEFAULT_PORT=3000
 set DEFAULT_HOST=0.0.0.0
 set RAILS_ENV=development
 

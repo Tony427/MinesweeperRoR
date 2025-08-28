@@ -12,8 +12,8 @@ gem "sprockets-rails", ">= 3.4.0"
 # Use sqlite3 as the database for Active Record in development
 gem "sqlite3", "~> 1.4", group: [:development, :test]
 
-# Use PostgreSQL as the database for production (Docker and Heroku)
-gem "pg", "~> 1.5", group: :production
+# Use PostgreSQL as the database for production and docker development
+gem "pg", "~> 1.5", group: [:development, :production]
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 6.0"
