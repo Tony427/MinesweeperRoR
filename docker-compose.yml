@@ -4,14 +4,19 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - RAILS_ENV=development
+      - RAILS_ENV=docker_development
       - SECRET_KEY_BASE=${SECRET_KEY_BASE:-default_secret_key_for_development}
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
       - RAILS_MAX_THREADS=5
       - WEB_CONCURRENCY=2
+      # Database configuration
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=minesweeper_docker_development
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=password
     volumes:
-      - sqlite_data:/app/db
       - ./log:/app/log
       # Development volume mounts for hot reloading
       - ./app:/app/app
@@ -21,12 +26,12 @@ services:
     command: >
       sh -c "
         echo '🔧 Setting up Rails application...' &&
-        mkdir -p tmp/pids db log &&
+        mkdir -p tmp/pids log &&
         bundle check || echo '📦 Bundle check completed' &&
         echo '🗄️ Setting up database...' &&
         bundle exec rails db:create db:migrate || echo '⚠️ Database setup completed' &&
         echo '🚀 Starting Rails server...' &&
-        RAILS_ENV=development bundle exec puma -C config/puma.rb
+        RAILS_ENV=docker_development bundle exec puma -C config/puma.rb
       "
     # Resource limits
     deploy:
@@ -46,7 +51,36 @@ services:
       start_period: 40s
     # Dependency and network configuration
     depends_on:
+      - db
       - redis
+    networks:
+      - minesweeper_network
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=minesweeper_docker_development
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d minesweeper_docker_development"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     networks:
       - minesweeper_network
 
@@ -75,7 +109,7 @@ services:
       - minesweeper_network
 
 volumes:
-  sqlite_data:
+  postgres_data:
     driver: local
   redis_data:
     driver: local
