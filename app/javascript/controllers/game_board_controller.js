@@ -23,8 +23,6 @@ export default class extends Controller {
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
     
-    console.log('Cell clicked:', { row, col })
-    
     // Dispatch custom event to minesweeper controller
     const customEvent = new CustomEvent('game-board:reveal', {
       detail: { row, col, element: event.currentTarget },
@@ -37,8 +35,6 @@ export default class extends Controller {
   toggle(event) {
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
-    
-    console.log('Cell right-clicked:', { row, col })
     
     // Dispatch custom event to minesweeper controller
     const customEvent = new CustomEvent('game-board:toggle', {
