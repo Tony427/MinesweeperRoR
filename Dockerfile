@@ -5,6 +5,7 @@ FROM ruby:3.4.3-alpine AS builder
 RUN apk add --no-cache \
     build-base \
     sqlite-dev \
+    postgresql-dev \
     nodejs \
     yarn \
     tzdata \
@@ -33,6 +34,7 @@ FROM ruby:3.4.3-alpine AS runtime
 # Install runtime dependencies only
 RUN apk add --no-cache \
     sqlite \
+    postgresql-client \
     tzdata \
     nodejs \
     && rm -rf /var/cache/apk/*
