@@ -53,9 +53,9 @@ COPY --from=builder /usr/local/bundle /usr/local/bundle
 COPY --from=builder --chown=rails:rails /app /app
 
 # Create necessary directories with proper permissions
-RUN mkdir -p /app/db /app/tmp/pids /app/log && \
-    chown -R rails:rails /app/db /app/tmp /app/log && \
-    chmod 755 /app/db
+RUN mkdir -p /app/db /app/tmp/pids /app/log /app/tmp/cache && \
+    chown -R rails:rails /app /usr/local/bundle && \
+    chmod -R 755 /app/tmp /app/db
 
 # Switch to non-root user
 USER rails
