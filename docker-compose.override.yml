@@ -13,7 +13,7 @@ services:
     # Development environment variables
     environment:
       - RAILS_ENV=docker_development
-      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-development_secret_key_base_change_in_production}
+      - SECRET_KEY_BASE=docker_development_secret_key_base_change_in_production_12345678901234567890123456789012
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
       - RAILS_MAX_THREADS=5
