@@ -45,7 +45,7 @@ if ENV.fetch("RAILS_ENV") { "development" } != "development"
   worker_shutdown_timeout 30
   
   # Redirect worker stdout/stderr to log files in production
-  stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true if ENV.fetch("RAILS_ENV") { "development" } == "production"
+  # stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true if ENV.fetch("RAILS_ENV") { "development" } == "production"
 else
   # Single worker in development for easier debugging
   workers 0
