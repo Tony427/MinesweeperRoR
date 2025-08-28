@@ -19,7 +19,7 @@ export default class extends Controller {
     this.gameOverValue = false;
     this.revealedCount = 0;
     this.statusTarget.textContent = "";
-    this.cells.forEach(cell => {
+    this.cellTargets.forEach(cell => {
       cell.classList.remove("revealed", "mine", "flagged");
       cell.classList.add("covered");
       cell.textContent = "";
@@ -37,11 +37,27 @@ export default class extends Controller {
     const row = parseInt(cell.dataset.row);
     const col = parseInt(cell.dataset.col);
 
-    if (this.board[row][col] === 'X') {
+    if (this.board[row][col].mine === true) {
       this.endGame(false);
     } else {
       this.revealCell(row, col);
       this.checkWinCondition();
+    }
+  }
+
+  toggle(event) {
+    event.preventDefault();
+    if (this.gameOverValue) return;
+
+    const cell = event.currentTarget;
+    if (cell.classList.contains("revealed")) return;
+
+    if (cell.classList.contains("flagged")) {
+      cell.classList.remove("flagged");
+      cell.textContent = "";
+    } else {
+      cell.classList.add("flagged");
+      cell.textContent = "🚩";
     }
   }
 
