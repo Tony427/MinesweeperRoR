@@ -5,6 +5,7 @@ import { CellStyler } from "../utils/cell_styler.js"
 
 export default class extends Controller {
   static targets = ["cell"]
+  static values = { width: Number, height: Number }
 
   connect() {
     this.setupKeyboardNavigation()
@@ -100,8 +101,8 @@ export default class extends Controller {
     if (!this.element.contains(document.activeElement) && 
         !this.element.contains(event.target)) return
 
-    const maxRow = parseInt(this.data.get('height')) - 1
-    const maxCol = parseInt(this.data.get('width')) - 1
+    const maxRow = this.heightValue - 1
+    const maxCol = this.widthValue - 1
 
     switch (event.key) {
       case 'ArrowUp':
