@@ -49,6 +49,7 @@ export default class extends Controller {
 
   // Handle cell reveal from board controller
   handleReveal(event) {
+    console.log('Received reveal event:', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.revealCell(row, col)
 
@@ -102,6 +103,7 @@ export default class extends Controller {
 
   // Handle cell flag toggle from board controller
   handleToggle(event) {
+    console.log('Received toggle event:', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.toggleFlag(row, col)
 

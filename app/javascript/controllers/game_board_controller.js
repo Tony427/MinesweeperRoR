@@ -23,10 +23,14 @@ export default class extends Controller {
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
     
+    console.log('Cell clicked:', { row, col })
+    
     // Dispatch custom event to minesweeper controller
-    this.dispatch("reveal", { 
-      detail: { row, col, element: event.currentTarget }
+    const customEvent = new CustomEvent('game-board:reveal', {
+      detail: { row, col, element: event.currentTarget },
+      bubbles: true
     })
+    this.element.dispatchEvent(customEvent)
   }
 
   // Handle right click - toggle flag
@@ -34,10 +38,14 @@ export default class extends Controller {
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
     
+    console.log('Cell right-clicked:', { row, col })
+    
     // Dispatch custom event to minesweeper controller
-    this.dispatch("toggle", { 
-      detail: { row, col, element: event.currentTarget }
+    const customEvent = new CustomEvent('game-board:toggle', {
+      detail: { row, col, element: event.currentTarget },
+      bubbles: true
     })
+    this.element.dispatchEvent(customEvent)
   }
 
   // Update single cell appearance
