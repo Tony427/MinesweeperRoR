@@ -1,14 +1,33 @@
-<div class="container">
-  <h2><%= @board.name %></h2>
-  <p class="text-muted">Created by: <%= @board.email %> on <%= @board.created_at.to_formatted_s(:long) %></p>
+<div class="container"
+     data-controller="game-board"
+     data-game-board-board-data-value="<%= @board.board_data %>"
+     data-game-board-width-value="<%= @board.width %>"
+     data-game-board-height-value="<%= @board.height %>"
+     data-game-board-mines-count-value="<%= @board.mines_count %>"
+     data-game-board-game-over-value="false">
+
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h2><%= @board.name %></h2>
+      <p class="text-muted">Created by: <%= @board.email %></p>
+    </div>
+    <div id="game-status" data-game-board-target="status" class="h3"></div>
+  </div>
+
 
   <div class="mt-4">
-    <h4>Board State:</h4>
-    <div class="board-grid" style="display: grid; grid-template-columns: repeat(<%= @board.width %>, 2rem); gap: 2px; margin-top: 1rem;">
-      <% JSON.parse(@board.board_data).each do |row| %>
-        <% row.each do |cell| %>
-          <div class="cell" style="width: 2rem; height: 2rem; border: 1px solid #ccc; display: flex; justify-content: center; align-items: center; background-color: #f0f0f0;">
-            <%= cell == 'X' ? '💣' : '□' %>
+    <div class="board-grid"
+         data-game-board-target="grid"
+         style="display: grid; grid-template-columns: repeat(<%= @board.width %>, 2rem); gap: 2px; margin-top: 1rem; user-select: none;">
+
+      <% JSON.parse(@board.board_data).each_with_index do |row, row_index| %>
+        <% row.each_with_index do |cell, col_index| %>
+          <div class="cell covered"
+               data-action="click->game-board#reveal contextmenu->game-board#flag"
+               data-game-board-target="cell"
+               data-row="<%= row_index %>"
+               data-col="<%= col_index %>"
+               style="width: 2rem; height: 2rem; border: 1px solid #ccc; display: flex; justify-content: center; align-items: center; background-color: #ddd; cursor: pointer;">
           </div>
         <% end %>
       <% end %>
@@ -17,5 +36,6 @@
 
   <div class="mt-4">
     <%= link_to 'Back to Home', root_path, class: 'btn btn-secondary' %>
+    <button data-action="click->game-board#reset" class="btn btn-primary">Reset Game</button>
   </div>
 </div>
