@@ -45,7 +45,7 @@ if ENV.fetch("RAILS_ENV") { "development" } != "development"
   worker_shutdown_timeout 30
   
   # Redirect worker stdout/stderr to log files in production
-  stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true if ENV.fetch("RAILS_ENV") { "development" } == "production"
+  # stdout_redirect 'log/puma_access.log', 'log/puma_error.log', true if ENV.fetch("RAILS_ENV") { "development" } == "production"
 else
   # Single worker in development for easier debugging
   workers 0
@@ -61,7 +61,7 @@ bind_to = ENV.fetch("PUMA_BIND") { "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
 bind bind_to unless bind_to == "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
 
 # Performance tuning
-nakayoshi_fork if ENV.fetch("RAILS_ENV") { "development" } != "development"
+nakayoshi_fork if respond_to?(:nakayoshi_fork) && ENV.fetch("RAILS_ENV") { "development" } != "development"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart

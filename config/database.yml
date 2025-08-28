@@ -20,19 +20,7 @@ test:
   <<: *default
   database: db/test.sqlite3
 
-# Production environment (Heroku and Docker deployment)
+# Production environment (Heroku deployment)
 production:
-  adapter: postgresql
-  encoding: unicode
-  # Use DATABASE_URL for Heroku, fallback to individual params for Docker
-  <% if ENV['DATABASE_URL'] %>
-    url: <%= ENV['DATABASE_URL'] %>
-  <% else %>
-    database: <%= ENV['POSTGRES_DB'] || 'minesweeper_production' %>
-    username: <%= ENV['POSTGRES_USER'] || 'postgres' %>
-    password: <%= ENV['POSTGRES_PASSWORD'] %>
-    host: <%= ENV['POSTGRES_HOST'] || 'localhost' %>
-    port: <%= ENV['POSTGRES_PORT'] || 5432 %>
-  <% end %>
+  url: <%= ENV['DATABASE_URL'] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000

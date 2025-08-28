@@ -112,6 +112,7 @@ Rails.application.configure do
   # Additional security configurations
   # Prevent host header injection
   config.hosts << ENV['HEROKU_APP_NAME'] + '.herokuapp.com' if ENV['HEROKU_APP_NAME'].present?
+  config.hosts << 'minesweeper-ror-b3bbbcd5ac8d.herokuapp.com'
   
   # Security headers
   config.force_ssl = true
