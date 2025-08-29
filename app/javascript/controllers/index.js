@@ -3,9 +3,9 @@
 import { application } from "controllers/application"
 
 // Import controllers explicitly to ensure proper registration
-import GameBoardController from "controllers/game_board_controller"
-import GameStatusController from "controllers/game_status_controller"
-import MinesweeperController from "controllers/minesweeper_controller"
+import GameBoardController from "./game_board_controller"
+import GameStatusController from "./game_status_controller"  
+import MinesweeperController from "./minesweeper_controller"
 
 // Register controllers explicitly
 application.register("game-board", GameBoardController)
