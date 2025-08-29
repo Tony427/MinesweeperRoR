@@ -12,6 +12,12 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('minesweeper #connect', this.element, {
+      width: this.widthValue,
+      height: this.heightValue,
+      mines: this.minesValue,
+      hasBoardTarget: this.hasBoardTarget
+    })
     this.initializeGame()
     this.setupEventListeners()
   }
@@ -49,6 +55,7 @@ export default class extends Controller {
 
   // Handle cell reveal from board controller
   handleReveal(event) {
+    console.log('minesweeper #handleReveal', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.revealCell(row, col)
 
@@ -102,6 +109,7 @@ export default class extends Controller {
 
   // Handle cell flag toggle from board controller
   handleToggle(event) {
+    console.log('minesweeper #handleToggle', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.toggleFlag(row, col)
 

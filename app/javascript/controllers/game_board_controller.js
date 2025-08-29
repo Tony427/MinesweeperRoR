@@ -8,6 +8,11 @@ export default class extends Controller {
   static values = { width: Number, height: Number }
 
   connect() {
+    console.log('game-board #connect', this.element, {
+      targets: this.cellTargets.length,
+      width: this.widthValue,
+      height: this.heightValue
+    })
     this.setupKeyboardNavigation()
     this.preventContextMenu()
     this.currentFocusRow = 0
@@ -20,8 +25,10 @@ export default class extends Controller {
 
   // Handle left click - reveal cell
   reveal(event) {
+    console.log('game-board #reveal called', event, event.currentTarget)
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    console.log('Revealing cell at:', { row, col })
     
     // Dispatch custom event to minesweeper controller
     const customEvent = new CustomEvent('game-board:reveal', {
@@ -29,12 +36,15 @@ export default class extends Controller {
       bubbles: true
     })
     this.element.dispatchEvent(customEvent)
+    console.log('Custom event dispatched:', customEvent)
   }
 
   // Handle right click - toggle flag
   toggle(event) {
+    console.log('game-board #toggle called', event, event.currentTarget)
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    console.log('Toggling flag at:', { row, col })
     
     // Dispatch custom event to minesweeper controller
     const customEvent = new CustomEvent('game-board:toggle', {
@@ -42,6 +52,7 @@ export default class extends Controller {
       bubbles: true
     })
     this.element.dispatchEvent(customEvent)
+    console.log('Toggle event dispatched:', customEvent)
   }
 
   // Update single cell appearance
