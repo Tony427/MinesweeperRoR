@@ -10,7 +10,8 @@
  * files in this directory. Styles in this file follow the same ordering precedence as CSS.
  */
 
-/* Bootstrap import temporarily removed - will fix after checking other files */
+/* Bootstrap */
+@import "bootstrap";
 
 /* Base styles */
 @import "base/variables";
