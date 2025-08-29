@@ -17,6 +17,9 @@ export default class extends Controller {
     this.preventContextMenu()
     this.currentFocusRow = 0
     this.currentFocusCol = 0
+
+    // Listen for custom event to reset the board
+    this.element.addEventListener('minesweeper:reset-board', this.handleResetBoard.bind(this))
   }
 
   disconnect() {
@@ -52,7 +55,7 @@ export default class extends Controller {
       bubbles: true
     })
     this.element.dispatchEvent(customEvent)
-    console.log('Toggle event dispatched:', customEvent)
+    console.log('Custom event dispatched:', customEvent)
   }
 
   // Update single cell appearance
@@ -176,5 +179,11 @@ export default class extends Controller {
 
   preventContextMenu() {
     this.element.addEventListener('contextmenu', (e) => e.preventDefault())
+  }
+
+  // New method to handle the reset board event
+  handleResetBoard(event) {
+    console.log('game-board #handleResetBoard received', event)
+    this.resetCells()
   }
 }

@@ -139,7 +139,8 @@ export default class extends Controller {
   }
 
   resetBoard() {
-    this.getBoardController().resetCells()
+    // Dispatch a custom event for the game-board controller to reset itself
+    this.dispatch('reset-board', { target: this.boardTarget, bubbles: true })
   }
 
   updateGameStatus() {
