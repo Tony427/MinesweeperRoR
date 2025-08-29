@@ -1,1 +1,0 @@
-// Main Stimulus Application controller

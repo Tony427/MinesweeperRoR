@@ -1,1 +1,0 @@
-// Game cell Stimulus controller

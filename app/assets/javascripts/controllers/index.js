@@ -1,1 +1,0 @@
-// Stimulus controllers index file
