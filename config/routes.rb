@@ -4,9 +4,6 @@ Rails.application.routes.draw do
   # Health check endpoint for monitoring
   get 'health', to: 'application#health'
   
-  # Test route
-  get 'test', to: 'test#index'
-  
   # Web routes
   scope module: :web do
     resources :boards, only: [:index, :show, :create] do
