@@ -1,6 +1,6 @@
 // Game status display controller
 import { Controller } from "@hotwired/stimulus"
-import { DOMHelpers } from "../utils/dom_helpers.js"
+import { DOMHelpers } from "utils/dom_helpers"
 
 export default class extends Controller {
   static targets = ["mines", "status", "timer"]

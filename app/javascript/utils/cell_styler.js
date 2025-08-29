@@ -1,6 +1,6 @@
 // Cell styling utilities
-import { CELL_STYLES, COLORS } from './constants.js'
-import { DOMHelpers } from './dom_helpers.js'
+import { CELL_STYLES, COLORS } from 'utils/constants'
+import { DOMHelpers } from 'utils/dom_helpers'
 
 export class CellStyler {
   static resetCell(element) {
