@@ -63,7 +63,7 @@
             data-row="<%= row_idx %>" 
             data-col="<%= col_idx %>" 
             data-mine="<%= cell['mine'] ? 'true' : 'false' %>"
-            data-action="click->game-board#reveal contextmenu->game-board#toggle"
+            data-action="click->game-board#handleCellClick contextmenu->game-board#handleCellRightClick"
             tabindex="-1">
           </div>
         <% end %>
