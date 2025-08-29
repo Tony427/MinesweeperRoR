@@ -112,7 +112,7 @@ export default class extends Controller {
         if (
           newRow >= 0 && newRow < this.heightValue &&
           newCol >= 0 && newCol < this.widthValue &&
-          this.board[newRow][newCol] === 'X'
+          this.board[newRow][newCol].mine === true
         ) {
           count++;
         }
@@ -137,7 +137,7 @@ export default class extends Controller {
     this.cells.forEach(cell => {
       const row = parseInt(cell.dataset.row);
       const col = parseInt(cell.dataset.col);
-      if (this.board[row][col] === 'X') {
+      if (this.board[row][col].mine === true) {
         cell.classList.remove("covered", "flagged");
         cell.classList.add("mine");
         cell.textContent = "💣";
