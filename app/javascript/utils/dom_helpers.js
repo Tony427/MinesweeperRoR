@@ -1,10 +1,8 @@
 // DOM manipulation helpers
 export class DOMHelpers {
   static updateElement(element, content = '', styles = {}) {
-    if (content !== '') {
-      element.textContent = content
-    }
-    
+    element.textContent = content // Always set textContent
+
     Object.assign(element.style, styles)
   }
 
