@@ -18,8 +18,8 @@ export default class extends Controller {
       mines: this.minesValue,
       hasBoardTarget: this.hasBoardTarget
     })
-    this.initializeGame()
-    this.setupEventListeners()
+    // Listen for game-board:ready event before initializing game
+    this.element.addEventListener('game-board:ready', this.startMinesweeperGame.bind(this))
   }
 
   disconnect() {
@@ -37,6 +37,7 @@ export default class extends Controller {
       this.minesValue, 
       boardData
     )
+    console.log('minesweeper #initializeGame: After GameEngine init', this.gameEngine)
 
     // Set CSS custom properties for board dimensions
     this.element.style.setProperty('--board-width', this.widthValue)
@@ -186,5 +187,10 @@ export default class extends Controller {
     if (this.gameEngine) {
       // Game engine cleanup if needed
     }
+  }
+
+  startMinesweeperGame() {
+    this.initializeGame()
+    this.setupEventListeners()
   }
 }

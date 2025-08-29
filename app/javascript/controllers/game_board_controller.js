@@ -23,6 +23,10 @@ export default class extends Controller {
 
     // Attempt to focus the game board element for keyboard navigation
     this.element.focus()
+
+    // Dispatch game-board:ready event
+    this.dispatch('ready', { bubbles: true })
+    console.log('game-board:ready event dispatched')
   }
 
   disconnect() {
@@ -119,8 +123,9 @@ export default class extends Controller {
   }
 
   handleKeyboard(event) {
-    if (!this.element.contains(document.activeElement) && 
-        !this.element.contains(event.target)) return
+    // Removed focus check to see if it resolves the first click issue
+    // if (!this.element.contains(document.activeElement) && 
+    //     !this.element.contains(event.target)) return
 
     const maxRow = this.heightValue - 1
     const maxCol = this.widthValue - 1
