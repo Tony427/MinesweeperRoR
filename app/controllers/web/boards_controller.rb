@@ -13,9 +13,10 @@ class Web::BoardsController < Web::BaseController
   def create
     @board = Board.new(board_params)
     
-    if @board.save
+    if @board.valid?
       generator = MinesweeperGenerator.new(@board.width, @board.height, @board.mines_count)
-      @board.update(board_data: generator.generate.to_json)
+      @board.board_data = generator.generate.to_json
+      @board.save!
       redirect_to board_path(@board), notice: 'Board generated successfully!'
     else
       @recent_boards = Board.latest_ten
