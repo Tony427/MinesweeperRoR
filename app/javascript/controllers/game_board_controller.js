@@ -1,7 +1,7 @@
 // Game board interaction controller
 import { Controller } from "@hotwired/stimulus"
-import { DOMHelpers } from "../utils/dom_helpers.js"
-import { CellStyler } from "../utils/cell_styler.js"
+import { DOMHelpers } from "utils/dom_helpers"
+import { CellStyler } from "utils/cell_styler"
 
 export default class extends Controller {
   static targets = ["cell"]

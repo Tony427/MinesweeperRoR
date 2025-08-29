@@ -1,5 +1,5 @@
 // Game state management service
-import { GAME_STATUS } from '../utils/constants.js'
+import { GAME_STATUS } from 'utils/constants'
 
 export class GameStateManager {
   constructor(width, height, totalMines) {

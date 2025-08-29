@@ -1,7 +1,7 @@
 // Core game engine service
-import { BoardCalculator } from './board_calculator.js'
-import { GameStateManager } from './game_state_manager.js'
-import { GAME_STATUS, CELL_STATUS } from '../utils/constants.js'
+import { BoardCalculator } from 'services/board_calculator'
+import { GameStateManager } from 'services/game_state_manager'
+import { GAME_STATUS, CELL_STATUS } from 'utils/constants'
 
 export class GameEngine {
   constructor(width, height, totalMines, boardData = null) {

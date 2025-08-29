@@ -1,6 +1,6 @@
 // Main minesweeper game coordinator controller
 import { Controller } from "@hotwired/stimulus"
-import { GameEngine } from "../services/game_engine.js"
+import { GameEngine } from "services/game_engine"
 
 export default class extends Controller {
   static targets = ["board", "resetBtn"]
