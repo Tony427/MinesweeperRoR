@@ -61,4 +61,16 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+  
+  # Docker-specific configurations (only when running in Docker)
+  if ENV['DOCKER_ENV'] == 'true'
+    config.hosts << "web"
+    config.hosts << "localhost"
+    config.hosts << "127.0.0.1"
+    config.hosts << "0.0.0.0"
+    
+    # Force logs to stdout for Docker
+    config.logger = ActiveSupport::Logger.new(STDOUT)
+    config.log_level = :debug
+  end
 end

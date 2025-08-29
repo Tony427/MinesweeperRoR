@@ -4,7 +4,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - RAILS_ENV=docker_development
+      - RAILS_ENV=development
+      - DOCKER_ENV=true
       - SECRET_KEY_BASE=docker_development_secret_key_base_change_in_production_12345678901234567890123456789012
       - RAILS_SERVE_STATIC_FILES=true
       - RAILS_LOG_TO_STDOUT=true
@@ -13,7 +14,7 @@ services:
       # Database configuration
       - DATABASE_HOST=db
       - DATABASE_PORT=5432
-      - DATABASE_NAME=minesweeper_docker_development
+      - DATABASE_NAME=minesweeper_development
       - DATABASE_USERNAME=postgres
       - DATABASE_PASSWORD=password
     volumes:
@@ -31,7 +32,7 @@ services:
         echo '🗄️ Setting up database...' &&
         bundle exec rails db:create db:migrate || echo '⚠️ Database setup completed' &&
         echo '🚀 Starting Rails server...' &&
-        RAILS_ENV=docker_development bundle exec puma -C config/puma.rb
+        RAILS_ENV=development bundle exec puma -C config/puma.rb
       "
     # Resource limits
     deploy:
@@ -52,7 +53,6 @@ services:
     # Dependency and network configuration
     depends_on:
       - db
-      - redis
     networks:
       - minesweeper_network
 
@@ -61,7 +61,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=minesweeper_docker_development
+      - POSTGRES_DB=minesweeper_development
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     volumes:
@@ -76,7 +76,7 @@ services:
           memory: 128M
           cpus: '0.25'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d minesweeper_docker_development"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d minesweeper_development"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -84,34 +84,8 @@ services:
     networks:
       - minesweeper_network
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-          cpus: '0.5'
-        reservations:
-          memory: 64M
-          cpus: '0.1'
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    networks:
-      - minesweeper_network
-
 volumes:
   postgres_data:
-    driver: local
-  redis_data:
     driver: local
 
 networks:
