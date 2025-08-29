@@ -56,15 +56,14 @@ Rails.application.configure do
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
-  # Use Redis cache store in production for better performance
-  config.cache_store = :redis_cache_store, { 
-    url: ENV.fetch("REDIS_URL", "redis://localhost:6379/0"),
-    expires_in: 1.hour,
-    race_condition_ttl: 10.seconds
+  # Use default memory cache store for simplicity
+  config.cache_store = :memory_store, { 
+    size: 32.megabytes,
+    expires_in: 1.hour
   }
 
-  # Use a real queuing backend for Active Job (and separate queues per environment).
-  config.active_job.queue_adapter = :resque if ENV["REDIS_URL"].present?
+  # Use default job adapter for simplicity (no background jobs needed)
+  # config.active_job.queue_adapter = :async 
   config.active_job.queue_name_prefix = "minesweeper_ror_production"
 
   config.action_mailer.perform_caching = false

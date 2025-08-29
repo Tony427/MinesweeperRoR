@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   
   def health
-    # Basic health check - verify database connection and Redis if available
+    # Basic health check - verify database and cache connections
     checks = {
       status: 'ok',
       timestamp: Time.current.iso8601,
@@ -20,17 +20,14 @@ class ApplicationController < ActionController::Base
       checks[:status] = 'error'
     end
     
+    # Cache check (memory store)
     begin
-      # Check Redis connection if configured
-      if defined?(Redis) && Rails.application.config.cache_store.is_a?(Array) && Rails.application.config.cache_store.first == :redis_cache_store
-        Rails.cache.redis.ping
-        checks[:redis] = 'ok'
-      else
-        checks[:redis] = 'not_configured'
-      end
+      Rails.cache.write('health_check', 'ok', expires_in: 1.second)
+      health_value = Rails.cache.read('health_check')
+      checks[:cache] = health_value == 'ok' ? 'ok' : 'error'
     rescue => e
-      checks[:redis] = 'error'
-      checks[:redis_error] = e.message
+      checks[:cache] = 'error'  
+      checks[:cache_error] = e.message
       checks[:status] = 'degraded' if checks[:status] == 'ok'
     end
     

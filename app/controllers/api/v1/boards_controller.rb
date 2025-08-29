@@ -1,6 +1,6 @@
 class Api::V1::BoardsController < Api::V1::BaseController
   def index
-    boards = Application::Boards::BoardQueryService.recent_boards
+    boards = Board.recent
     render_success(
       boards.map { |board| Api::V1::BoardSerializer.new(board).as_json },
       message: "Successfully retrieved #{boards.count} boards"
@@ -8,34 +8,38 @@ class Api::V1::BoardsController < Api::V1::BaseController
   end
 
   def show
-    board = Application::Boards::BoardQueryService.find_board(params[:id])
+    board = Board.find(params[:id])
     render_success(
       Api::V1::BoardSerializer.new(board).as_json,
       message: 'Board retrieved successfully'
     )
+  rescue ActiveRecord::RecordNotFound
+    render_error('Board not found', status: :not_found)
   end
 
   def create
-    service = Application::Boards::CreateBoardService.new(board_params)
-    result = service.call
+    board = Board.new(board_params)
     
-    if result[:success]
+    if board.valid?
+      generator = MinesweeperGenerator.new(board.width, board.height, board.mines_count)
+      board.board_data = generator.generate.to_json
+      board.save!
       render_success(
-        Api::V1::BoardSerializer.new(result[:board]).as_json,
-        message: result[:message],
+        Api::V1::BoardSerializer.new(board).as_json,
+        message: 'Board generated successfully!',
         status: :created
       )
     else
       render_error(
         'Failed to create board',
-        details: result[:errors],
+        details: board.errors,
         status: :unprocessable_entity
       )
     end
   end
 
   def recent
-    boards = Application::Boards::BoardQueryService.latest_ten_boards
+    boards = Board.latest_ten
     render_success(
       boards.map { |board| Api::V1::BoardSerializer.new(board).as_json },
       message: "Successfully retrieved #{boards.count} recent boards"
@@ -43,7 +47,7 @@ class Api::V1::BoardsController < Api::V1::BaseController
   end
 
   def stats
-    count = Application::Boards::BoardQueryService.boards_count
+    count = Board.count
     render_success(
       { total_boards: count },
       message: 'Board statistics retrieved successfully'
