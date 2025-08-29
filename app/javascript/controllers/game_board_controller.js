@@ -20,6 +20,9 @@ export default class extends Controller {
 
     // Listen for custom event to reset the board
     this.element.addEventListener('minesweeper:reset-board', this.handleResetBoard.bind(this))
+
+    // Attempt to focus the game board element for keyboard navigation
+    this.element.focus()
   }
 
   disconnect() {
