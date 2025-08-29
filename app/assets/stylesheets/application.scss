@@ -13,17 +13,17 @@
 /* Bootstrap import temporarily removed - will fix after checking other files */
 
 /* Base styles */
-/* @import "base/variables"; */
-/* @import "base/typography"; */
+@import "base/variables";
+@import "base/typography";
 
 /* Components */
-/* @import "components/game_board"; */
-/* @import "components/game_cell"; */
-/* @import "components/game_status"; */  
-/* @import "components/buttons"; */
+@import "components/game_board";
+@import "components/game_cell";
+@import "components/game_status";  
+@import "components/buttons";
 
 /* Layouts */
-/* @import "layouts/responsive"; */
+@import "layouts/responsive";
 
 body {
   font-family: Arial, sans-serif;

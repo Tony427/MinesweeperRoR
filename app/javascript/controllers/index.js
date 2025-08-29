@@ -2,7 +2,17 @@
 
 import { application } from "controllers/application"
 
-// Eager load all controllers defined in the import map under controllers/**/*_controller
+// Import controllers explicitly to ensure proper registration
+import GameBoardController from "./game_board_controller"
+import GameStatusController from "./game_status_controller"  
+import MinesweeperController from "./minesweeper_controller"
+
+// Register controllers explicitly
+application.register("game-board", GameBoardController)
+application.register("game-status", GameStatusController)
+application.register("minesweeper", MinesweeperController)
+
+// Also try eager loading as fallback
 import { eagerLoadControllersFrom } from "@hotwired/stimulus-loading"
 eagerLoadControllersFrom("controllers", application)
 

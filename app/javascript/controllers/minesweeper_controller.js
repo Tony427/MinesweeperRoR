@@ -12,8 +12,14 @@ export default class extends Controller {
   }
 
   connect() {
-    this.initializeGame()
-    this.setupEventListeners()
+    console.log('minesweeper #connect', this.element, {
+      width: this.widthValue,
+      height: this.heightValue,
+      mines: this.minesValue,
+      hasBoardTarget: this.hasBoardTarget
+    })
+    // Listen for game-board:ready event before initializing game
+    this.element.addEventListener('game-board:ready', this.startMinesweeperGame.bind(this))
   }
 
   disconnect() {
@@ -31,6 +37,7 @@ export default class extends Controller {
       this.minesValue, 
       boardData
     )
+    console.log('minesweeper #initializeGame: After GameEngine init', this.gameEngine)
 
     // Set CSS custom properties for board dimensions
     this.element.style.setProperty('--board-width', this.widthValue)
@@ -49,6 +56,7 @@ export default class extends Controller {
 
   // Handle cell reveal from board controller
   handleReveal(event) {
+    console.log('minesweeper #handleReveal', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.revealCell(row, col)
 
@@ -102,6 +110,7 @@ export default class extends Controller {
 
   // Handle cell flag toggle from board controller
   handleToggle(event) {
+    console.log('minesweeper #handleToggle', event.detail)
     const { row, col, element } = event.detail
     const result = this.gameEngine.toggleFlag(row, col)
 
@@ -131,7 +140,8 @@ export default class extends Controller {
   }
 
   resetBoard() {
-    this.getBoardController().resetCells()
+    // Dispatch a custom event for the game-board controller to reset itself
+    this.dispatch('reset-board', { target: this.boardTarget, bubbles: true })
   }
 
   updateGameStatus() {
@@ -177,5 +187,10 @@ export default class extends Controller {
     if (this.gameEngine) {
       // Game engine cleanup if needed
     }
+  }
+
+  startMinesweeperGame() {
+    this.initializeGame()
+    this.setupEventListeners()
   }
 }

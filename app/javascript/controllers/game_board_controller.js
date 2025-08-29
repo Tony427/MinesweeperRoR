@@ -5,12 +5,28 @@ import { CellStyler } from "../utils/cell_styler.js"
 
 export default class extends Controller {
   static targets = ["cell"]
+  static values = { width: Number, height: Number }
 
   connect() {
+    console.log('game-board #connect', this.element, {
+      targets: this.cellTargets.length,
+      width: this.widthValue,
+      height: this.heightValue
+    })
     this.setupKeyboardNavigation()
     this.preventContextMenu()
     this.currentFocusRow = 0
     this.currentFocusCol = 0
+
+    // Listen for custom event to reset the board
+    this.element.addEventListener('minesweeper:reset-board', this.handleResetBoard.bind(this))
+
+    // Attempt to focus the game board element for keyboard navigation
+    this.element.focus()
+
+    // Dispatch game-board:ready event
+    this.dispatch('ready', { bubbles: true })
+    console.log('game-board:ready event dispatched')
   }
 
   disconnect() {
@@ -19,24 +35,34 @@ export default class extends Controller {
 
   // Handle left click - reveal cell
   reveal(event) {
+    console.log('game-board #reveal called', event, event.currentTarget)
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    console.log('Revealing cell at:', { row, col })
     
     // Dispatch custom event to minesweeper controller
-    this.dispatch("reveal", { 
-      detail: { row, col, element: event.currentTarget }
+    const customEvent = new CustomEvent('game-board:reveal', {
+      detail: { row, col, element: event.currentTarget },
+      bubbles: true
     })
+    this.element.dispatchEvent(customEvent)
+    console.log('Custom event dispatched:', customEvent)
   }
 
   // Handle right click - toggle flag
   toggle(event) {
+    console.log('game-board #toggle called', event, event.currentTarget)
     event.preventDefault()
     const { row, col } = DOMHelpers.getCellCoordinates(event.currentTarget)
+    console.log('Toggling flag at:', { row, col })
     
     // Dispatch custom event to minesweeper controller
-    this.dispatch("toggle", { 
-      detail: { row, col, element: event.currentTarget }
+    const customEvent = new CustomEvent('game-board:toggle', {
+      detail: { row, col, element: event.currentTarget },
+      bubbles: true
     })
+    this.element.dispatchEvent(customEvent)
+    console.log('Custom event dispatched:', customEvent)
   }
 
   // Update single cell appearance
@@ -97,11 +123,12 @@ export default class extends Controller {
   }
 
   handleKeyboard(event) {
-    if (!this.element.contains(document.activeElement) && 
-        !this.element.contains(event.target)) return
+    // Removed focus check to see if it resolves the first click issue
+    // if (!this.element.contains(document.activeElement) && 
+    //     !this.element.contains(event.target)) return
 
-    const maxRow = parseInt(this.data.get('height')) - 1
-    const maxCol = parseInt(this.data.get('width')) - 1
+    const maxRow = this.heightValue - 1
+    const maxCol = this.widthValue - 1
 
     switch (event.key) {
       case 'ArrowUp':
@@ -160,5 +187,11 @@ export default class extends Controller {
 
   preventContextMenu() {
     this.element.addEventListener('contextmenu', (e) => e.preventDefault())
+  }
+
+  // New method to handle the reset board event
+  handleResetBoard(event) {
+    console.log('game-board #handleResetBoard received', event)
+    this.resetCells()
   }
 }

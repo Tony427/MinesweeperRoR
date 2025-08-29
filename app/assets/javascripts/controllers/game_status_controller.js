@@ -1,1 +1,0 @@
-// Game status Stimulus controller

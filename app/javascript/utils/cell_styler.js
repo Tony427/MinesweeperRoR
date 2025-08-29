@@ -4,6 +4,14 @@ import { DOMHelpers } from './dom_helpers.js'
 
 export class CellStyler {
   static resetCell(element) {
+    // Clear dataset attributes
+    delete element.dataset.status
+    delete element.dataset.adjacent
+
+    // Remove specific styling classes that might be added
+    element.classList.remove('revealed', 'flagged', 'mine', 'win-mine', 'detonated')
+
+    // Reset content and default styles
     DOMHelpers.updateElement(element, '', CELL_STYLES.hidden)
   }
 

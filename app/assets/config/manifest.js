@@ -1,7 +1,6 @@
 //= link_tree ../images
 //= link_directory ../stylesheets .css  
-//= link_directory ../javascripts .js
 //= link application.js
-//= link_tree ../javascripts/controllers .js
-//= link_tree ../javascripts/services .js
-//= link_tree ../javascripts/utils .js
+//= link_tree ../../javascript/controllers .js
+//= link_tree ../../javascript/services .js
+//= link_tree ../../javascript/utils .js
