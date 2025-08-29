@@ -28,10 +28,10 @@ gem "turbo-rails"
 gem "stimulus-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
+# gem "jbuilder" - Removed: No JSON API views in this app
 
-# Use Redis adapter to run Action Cable in production
-gem "redis", "~> 4.0"
+# Use Redis adapter to run Action Cable in production  
+# gem "redis", "~> 4.0" - Removed: Simple app doesn't need caching
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -52,7 +52,7 @@ gem "sassc-rails"
 gem "bootstrap", "~> 5.3"
 
 # Use image_processing for variant generation
-gem "image_processing", "~> 1.2"
+# gem "image_processing", "~> 1.2" - Removed: No image processing in this app
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -72,9 +72,9 @@ end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
-  gem "capybara"
-  gem "selenium-webdriver"
-  gem "webdrivers"
+  # gem "capybara" - Removed: No tests exist in this project
+  # gem "selenium-webdriver" - Removed: No tests exist in this project  
+  # gem "webdrivers" - Removed: No tests exist in this project
 end
 
 # Production specific gems (Docker and Heroku)
